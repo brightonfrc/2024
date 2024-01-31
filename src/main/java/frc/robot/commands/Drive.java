@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
+import frc.robot.subsystems.Motors.TurnMotor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.controller.PIDController;
@@ -41,24 +42,24 @@ public class Drive extends Command {
   @Override
   public void initialize() {
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
-    bearingControllerFrontLeft.enableContinuousInput(0, 6.283185307);
+    bearingControllerFrontLeft.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerFrontLeft.setTolerance(0.01745329251);
+    bearingControllerFrontLeft.setTolerance(Math.PI/180);
 
     bearingControllerFrontRight=new PIDController(kP, kI, kD);
-    bearingControllerFrontRight.enableContinuousInput(0, 6.283185307);
+    bearingControllerFrontRight.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerFrontRight.setTolerance(0.01745329251);
+    bearingControllerFrontRight.setTolerance(Math.PI/180);
 
     bearingControllerBackLeft=new PIDController(kP, kI, kD);
-    bearingControllerBackLeft.enableContinuousInput(0, 6.283185307);
+    bearingControllerBackLeft.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerBackLeft.setTolerance(0.01745329251);
+    bearingControllerBackLeft.setTolerance(Math.PI/180);
 
     bearingControllerBackRight=new PIDController(kP, kI, kD);
-    bearingControllerBackRight.enableContinuousInput(0, 6.283185307);
+    bearingControllerBackRight.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerBackRight.setTolerance(0.01745329251);
+    bearingControllerBackRight.setTolerance(Math.PI/180);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -78,16 +79,16 @@ public class Drive extends Command {
       bearingControllerBackRight.reset();
     }
     currentBearing=encoders.motorTurned(1);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing),1);
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
   
     currentBearing=encoders.motorTurned(2);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing),2);
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
 
     currentBearing=encoders.motorTurned(3);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing),3);
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
     
     currentBearing=encoders.motorTurned(4);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing),4);
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_RIGHT);
     //setting the speed, but at 0.5 scale to ensure no one dies
     motors.setMoveMotors(joystick.getMagnitude()*0.5);
   }
@@ -96,10 +97,10 @@ public class Drive extends Command {
   @Override
   public void end(boolean interrupted) {
     motors.setMoveMotors(0);
-    motors.setTurnMotors(0, 1);
-    motors.setTurnMotors(0, 2);
-    motors.setTurnMotors(0, 3);
-    motors.setTurnMotors(0, 4);
+    motors.setTurnMotors(0, TurnMotor.FRONT_LEFT);
+    motors.setTurnMotors(0, TurnMotor.FRONT_RIGHT);
+    motors.setTurnMotors(0, TurnMotor.BACK_LEFT);
+    motors.setTurnMotors(0, TurnMotor.BACK_RIGHT);
   }
 
   // Returns true when the command should end.

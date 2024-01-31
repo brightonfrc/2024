@@ -74,7 +74,7 @@ public class Encoders extends SubsystemBase {
         deltaRadians= distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
         frontLeftBearing+=deltaRadians;
-        frontLeftBearing=frontLeftBearing%6.283185307;
+        frontLeftBearing=frontLeftBearing%(Math.PI*2);
         return frontLeftBearing;
       case 2:
         //return frontLeft degrees turned
@@ -83,7 +83,7 @@ public class Encoders extends SubsystemBase {
         deltaRadians= distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
         frontRightBearing+=deltaRadians;
-        frontRightBearing=frontRightBearing%6.283185307;
+        frontRightBearing=frontRightBearing%(Math.PI*2);
         return frontRightBearing;
       case 3: 
         //return frontLeft degrees turned
@@ -92,7 +92,7 @@ public class Encoders extends SubsystemBase {
         deltaRadians= distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
         backLeftBearing+=deltaRadians;
-        backLeftBearing=backLeftBearing%6.283185307;
+        backLeftBearing=backLeftBearing%(Math.PI*2);
         return backLeftBearing;
       case 4:    
         //return frontLeft degrees turned
@@ -101,7 +101,7 @@ public class Encoders extends SubsystemBase {
         deltaRadians= distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
         backRightBearing+=deltaRadians;
-        backRightBearing=backRightBearing%6.283185307;
+        backRightBearing=backRightBearing%(Math.PI*2);
         return backRightBearing;
     }
     //this should never happen, but just so the code is happy

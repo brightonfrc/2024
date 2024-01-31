@@ -15,7 +15,7 @@ public class Motors extends SubsystemBase {
   public static Talon backLeftTurn;
   public static Talon backRightMove;
   public static Talon backRightTurn;
-  
+
   public Motors(Talon FrontLeftMove, Talon FrontLeftTurn, Talon FrontRightMove, Talon FrontRightTurn, Talon BackLeftMove, Talon BackLeftTurn, Talon BackRightMove, Talon BackRightTurn) {
     frontLeftMove=FrontLeftMove;
     frontLeftTurn=FrontLeftTurn;
@@ -32,16 +32,21 @@ public class Motors extends SubsystemBase {
     backLeftMove.set(PIDoutput);
     backRightMove.set(PIDoutput);
   }
-  public void setTurnMotors(double PIDOutput, int motorNum){
-    switch (motorNum)
+
+  public enum TurnMotor {
+    FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
+  }
+
+  public void setTurnMotors(double PIDOutput, TurnMotor motor){
+    switch (motor)
     {  
-      case 1:
+      case FRONT_LEFT:
         frontLeftTurn.set(PIDOutput);
-      case 2:  
+      case FRONT_RIGHT:  
         frontRightTurn.set(PIDOutput);
-      case 3:
+      case BACK_LEFT:
         backLeftTurn.set(PIDOutput);
-      case 4:
+      case BACK_RIGHT:
       backRightTurn.set(PIDOutput);
     }
   }
