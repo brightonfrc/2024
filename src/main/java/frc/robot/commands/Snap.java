@@ -2,20 +2,23 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Encoders.TurnEncoder;
+import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.Command;
+
 /** An example command that uses an example subsystem. */
-public class Drive extends Command {
+public class Snap extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Encoders encoders;
   private final Motors motors;
-  private final Joystick joystick;
+  private final Encoders encoders;
+  private final Joystick stick;
+  
   private PIDController bearingControllerFrontLeft;
   private PIDController bearingControllerFrontRight;
   private PIDController bearingControllerBackLeft;
@@ -29,51 +32,52 @@ public class Drive extends Command {
   public GenericEntry I;
   public GenericEntry D;
 
+  private double joystickBearing;
   private double currentBearing;
-  private double previousBearingGoal;
-
+  private double snapGoal;
+  private double previousSnapGoal;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Drive(Motors motors, Encoders encoders, Joystick stick) {
-    this.encoders=encoders;
-    this.motors=motors;
-    joystick=stick;
+  public Snap(Motors motors, Encoders encoders, Joystick stick) {
+    this.motors = motors;
+    this.encoders= encoders;
+    this.stick= stick;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(motors,encoders);
+    addRequirements(motors, encoders);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
-    bearingControllerFrontLeft.enableContinuousInput(0, Math.PI*2);
+    bearingControllerFrontLeft.enableContinuousInput(0, 6.283185307);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerFrontLeft.setTolerance(Math.PI/180);
+    bearingControllerFrontLeft.setTolerance(0.01745329251);
 
     bearingControllerFrontRight=new PIDController(kP, kI, kD);
-    bearingControllerFrontRight.enableContinuousInput(0, Math.PI*2);
+    bearingControllerFrontRight.enableContinuousInput(0, 6.283185307);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerFrontRight.setTolerance(Math.PI/180);
+    bearingControllerFrontRight.setTolerance(0.01745329251);
 
     bearingControllerBackLeft=new PIDController(kP, kI, kD);
-    bearingControllerBackLeft.enableContinuousInput(0, Math.PI*2);
+    bearingControllerBackLeft.enableContinuousInput(0, 6.283185307);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerBackLeft.setTolerance(Math.PI/180);
+    bearingControllerBackLeft.setTolerance(0.01745329251);
 
     bearingControllerBackRight=new PIDController(kP, kI, kD);
-    bearingControllerBackRight.enableContinuousInput(0, Math.PI*2);
+    bearingControllerBackRight.enableContinuousInput(0, 6.283185307);
     //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerBackRight.setTolerance(Math.PI/180);
+    bearingControllerBackRight.setTolerance(0.01745329251);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //tuning the PID constants
+//tuning the PID constants
     tab= Shuffleboard.getTab("kP");
     P=tab.add("P constant",0).getEntry();
     kP=P.getDouble(0);
@@ -84,19 +88,22 @@ public class Drive extends Command {
     D=tab.add("D constant",0).getEntry();
     kD=D.getDouble(0);
 
-
-    if(previousBearingGoal!=joystick.getDirectionRadians())  
-    {
+    joystickBearing=stick.getDirectionRadians();
+    // coding the data from 1 to 4
+    joystickBearing= joystickBearing*0.63661977236;
+    //converting back to radians
+    snapGoal=Math.round(joystickBearing)*1.570796326;
+    if (snapGoal!=previousSnapGoal){
       //updating the new goal if the joystick is moved
-      previousBearingGoal=joystick.getDirectionRadians();
-      bearingControllerFrontLeft.setSetpoint(previousBearingGoal);
+      bearingControllerFrontLeft.setSetpoint(snapGoal);
       bearingControllerFrontLeft.reset();
-      bearingControllerFrontRight.setSetpoint(previousBearingGoal);
+      bearingControllerFrontRight.setSetpoint(snapGoal);
       bearingControllerFrontRight.reset();
-      bearingControllerBackLeft.setSetpoint(previousBearingGoal);
+      bearingControllerBackLeft.setSetpoint(snapGoal);
       bearingControllerBackLeft.reset();
-      bearingControllerBackRight.setSetpoint(previousBearingGoal);
+      bearingControllerBackRight.setSetpoint(snapGoal);
       bearingControllerBackRight.reset();
+      previousSnapGoal=snapGoal;
     }
     currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
     motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
@@ -109,16 +116,14 @@ public class Drive extends Command {
     
     currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
     motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_RIGHT);
-    //setting the speed, but at 0.5 scale to ensure no one dies
-    motors.setMoveMotors(joystick.getMagnitude()*0.5);
   }
+
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    motors.setMoveMotors(0);
     motors.setTurnMotors(0, TurnMotor.FRONT_LEFT);
-    motors.setTurnMotors(0, TurnMotor.FRONT_RIGHT);
+    motors.setTurnMotors(0,TurnMotor.FRONT_RIGHT);
     motors.setTurnMotors(0, TurnMotor.BACK_LEFT);
     motors.setTurnMotors(0, TurnMotor.BACK_RIGHT);
   }
@@ -129,4 +134,3 @@ public class Drive extends Command {
     return false;
   }
 }
-
