@@ -109,13 +109,13 @@ public class Snap extends Command {
     motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
   
     currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
+    motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
 
     currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
+    motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
     
     currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_RIGHT);
+    motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing), TurnMotor.BACK_RIGHT);
   }
 
 

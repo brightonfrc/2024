@@ -9,10 +9,12 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.Drive;
+import frc.robot.commands.Snap;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -56,6 +58,8 @@ public class RobotContainer {
   
   // remember to set the joystick port
   private Joystick stick = new Joystick(0);
+  // this is the button on the handle of the joystick
+  private JoystickButton snapButton = new JoystickButton(stick, 1);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -65,6 +69,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    defaultCommands();
   }
 
   /**
@@ -84,8 +89,8 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-
-    
+    snapButton.whileTrue(new Snap(motors, encoders, stick));
+  
   }
   private void defaultCommands(){
     motors.setDefaultCommand(new Drive(motors,encoders,stick));
