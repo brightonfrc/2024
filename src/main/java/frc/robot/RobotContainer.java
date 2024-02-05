@@ -13,6 +13,7 @@ import frc.robot.commands.Snap;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
+import frc.robot.subsystems.Gyroscope;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.Encoder;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.I2C;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -50,14 +53,15 @@ public class RobotContainer {
   private final Encoder backLeftTurn = new Encoder(0,0);
   private final Encoder backRightMove = new Encoder(0, 0);
   private final Encoder backRightTurn = new Encoder(0,0);
+  private final AHRS gyro = new AHRS(I2C.Port.kMXP);
 
 
   private final Motors motors= new Motors(FrontLeftMove, FrontLeftTurn, FrontRightMove, FrontRightTurn, BackLeftMove, BackLeftTurn, BackRightMove, BackRightTurn);
   //motor radius is configured in mm and distance per pulse is still unkown
   private final Encoders encoders= new Encoders(frontLeftMove, frontLeftTurn, frontRightTurn, frontRightMove, backLeftMove, backLeftTurn, backRightMove, backRightTurn, 38.1, 0);
-  
+  private final Gyroscope gyroscope = new Gyroscope(gyro);
   // remember to set the joystick port
-  private Joystick stick = new Joystick(0);
+  private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
   // this is the button on the handle of the joystick
   private JoystickButton snapButton = new JoystickButton(stick, 1);
 
@@ -89,7 +93,7 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
-    snapButton.whileTrue(new Snap(motors, encoders, stick));
+    snapButton.whileTrue(new Snap(motors, encoders, gyroscope, stick));
   
   }
   private void defaultCommands(){
