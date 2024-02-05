@@ -65,9 +65,12 @@ public class Encoders extends SubsystemBase {
     //this should never happen, but just in case
     return 0.0;
   }
-  public double motorTurned(int motorNum){
-    switch (motorNum){
-      case 1:
+  public enum TurnEncoder{
+    FRONT_LEFT,FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
+  }
+  public double motorTurned(TurnEncoder encoder){
+    switch (encoder){
+      case FRONT_LEFT:
         //return frontLeft degrees turned
         distanceRotated=FrontLeftTurn.getDistance();
         //using radians
@@ -76,7 +79,7 @@ public class Encoders extends SubsystemBase {
         frontLeftBearing+=deltaRadians;
         frontLeftBearing=frontLeftBearing%(Math.PI*2);
         return frontLeftBearing;
-      case 2:
+      case FRONT_RIGHT:
         //return frontLeft degrees turned
         distanceRotated=FrontLeftTurn.getDistance();
         //using radians
@@ -85,7 +88,7 @@ public class Encoders extends SubsystemBase {
         frontRightBearing+=deltaRadians;
         frontRightBearing=frontRightBearing%(Math.PI*2);
         return frontRightBearing;
-      case 3: 
+      case BACK_LEFT: 
         //return frontLeft degrees turned
         distanceRotated=FrontLeftTurn.getDistance();
         //using radians
@@ -94,7 +97,7 @@ public class Encoders extends SubsystemBase {
         backLeftBearing+=deltaRadians;
         backLeftBearing=backLeftBearing%(Math.PI*2);
         return backLeftBearing;
-      case 4:    
+      case BACK_RIGHT:    
         //return frontLeft degrees turned
         distanceRotated=FrontLeftTurn.getDistance();
         //using radians
