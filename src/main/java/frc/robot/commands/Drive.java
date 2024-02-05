@@ -49,6 +49,17 @@ public class Drive extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //tuning the PID constants
+    tab= Shuffleboard.getTab("kP");
+    P=tab.add("P constant",0).getEntry();
+    kP=P.getDouble(0);
+    tab= Shuffleboard.getTab("kI");
+    I=tab.add("I constant",0).getEntry();
+    kI=I.getDouble(0);
+    tab= Shuffleboard.getTab("kD");
+    D=tab.add("D constant",0).getEntry();
+    kD=D.getDouble(0);
+    
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
     bearingControllerFrontLeft.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
@@ -73,16 +84,7 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //tuning the PID constants
-    tab= Shuffleboard.getTab("kP");
-    P=tab.add("P constant",0).getEntry();
-    kP=P.getDouble(0);
-    tab= Shuffleboard.getTab("kI");
-    I=tab.add("I constant",0).getEntry();
-    kI=I.getDouble(0);
-    tab= Shuffleboard.getTab("kD");
-    D=tab.add("D constant",0).getEntry();
-    kD=D.getDouble(0);
+    
 
 
     if(previousBearingGoal!=joystick.getDirectionRadians())  
