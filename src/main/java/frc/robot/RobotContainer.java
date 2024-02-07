@@ -7,11 +7,13 @@ package frc.robot;
 // here is where you put all your commands and subsystems;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
+import frc.robot.commands.Snap;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Gyroscope;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -58,8 +60,10 @@ public class RobotContainer {
   private final Encoders encoders= new Encoders(frontLeftMove, frontLeftTurn, frontRightTurn, frontRightMove, backLeftMove, backLeftTurn, backRightMove, backRightTurn, 38.1, 0);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
   // remember to set the joystick port
-  private Joystick stick = new Joystick(0);
-  
+
+  private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
+  // this is the button on the handle of the joystick
+  private JoystickButton snapButton = new JoystickButton(stick, 1);
 
 
 
@@ -81,6 +85,8 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
+
+    snapButton.whileTrue(new Snap(motors, encoders, gyroscope, stick));
   
   }
   private void defaultCommands(){

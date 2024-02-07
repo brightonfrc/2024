@@ -46,7 +46,6 @@ public class Encoders extends SubsystemBase {
     backLeftBearing=0;
     backRightBearing=0;
   }
-
   public double getDistanceMoved(int motorNum){
     switch (motorNum){
       case 1:

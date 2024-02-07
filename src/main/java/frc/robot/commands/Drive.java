@@ -27,10 +27,12 @@ public class Drive extends Command {
   public double kP;
   public double kI;
   public double kD;
+
   // public ShuffleboardTab tab;
   // public GenericEntry P;
   // public GenericEntry I;
   // public GenericEntry D;
+
 
   private double currentBearing;
   private double previousBearingGoal;
@@ -56,6 +58,7 @@ public class Drive extends Command {
   @Override
   public void initialize() {
     //tuning the PID constants
+
     // tab= Shuffleboard.getTab("kP");
     // P=tab.add("P constant",0).getEntry();
     kP=PIDConstants.kDrivetrainP;
@@ -65,6 +68,7 @@ public class Drive extends Command {
     // tab= Shuffleboard.getTab("kD");
     // D=tab.add("D constant",0).getEntry();
     kD=PIDConstants.kDrivetrainD;
+
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
     bearingControllerFrontLeft.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
