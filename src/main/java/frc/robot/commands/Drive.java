@@ -5,6 +5,7 @@ import frc.robot.subsystems.Encoders.TurnEncoder;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
 import frc.robot.subsystems.Gyroscope;
+import frc.robot.Constants.PIDConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.controller.PIDController;
@@ -26,10 +27,10 @@ public class Drive extends Command {
   public double kP;
   public double kI;
   public double kD;
-  public ShuffleboardTab tab;
-  public GenericEntry P;
-  public GenericEntry I;
-  public GenericEntry D;
+  // public ShuffleboardTab tab;
+  // public GenericEntry P;
+  // public GenericEntry I;
+  // public GenericEntry D;
 
   private double currentBearing;
   private double previousBearingGoal;
@@ -55,15 +56,15 @@ public class Drive extends Command {
   @Override
   public void initialize() {
     //tuning the PID constants
-    tab= Shuffleboard.getTab("kP");
-    P=tab.add("P constant",0).getEntry();
-    kP=P.getDouble(0);
-    tab= Shuffleboard.getTab("kI");
-    I=tab.add("I constant",0).getEntry();
-    kI=I.getDouble(0);
-    tab= Shuffleboard.getTab("kD");
-    D=tab.add("D constant",0).getEntry();
-    kD=D.getDouble(0);
+    // tab= Shuffleboard.getTab("kP");
+    // P=tab.add("P constant",0).getEntry();
+    kP=PIDConstants.kDrivetrainP;
+    // tab= Shuffleboard.getTab("kI");
+    // I=tab.add("I constant",0).getEntry();
+    kI=PIDConstants.kDrivetrainI;
+    // tab= Shuffleboard.getTab("kD");
+    // D=tab.add("D constant",0).getEntry();
+    kD=PIDConstants.kDrivetrainD;
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
     bearingControllerFrontLeft.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
