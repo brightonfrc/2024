@@ -4,6 +4,8 @@ import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Encoders.TurnEncoder;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
+import frc.robot.subsystems.Gyroscope;
+import frc.robot.Constants.PIDConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.controller.PIDController;
@@ -15,6 +17,7 @@ public class Drive extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Encoders encoders;
   private final Motors motors;
+  private final Gyroscope gyro;
   private final Joystick joystick;
   private PIDController bearingControllerFrontLeft;
   private PIDController bearingControllerFrontRight;
@@ -24,13 +27,16 @@ public class Drive extends Command {
   public double kP;
   public double kI;
   public double kD;
-  public ShuffleboardTab tab;
-  public GenericEntry P;
-  public GenericEntry I;
-  public GenericEntry D;
+
+  // public ShuffleboardTab tab;
+  // public GenericEntry P;
+  // public GenericEntry I;
+  // public GenericEntry D;
+
 
   private double currentBearing;
   private double previousBearingGoal;
+  private double fieldOrientOffset;
 
 
   /**
@@ -38,28 +44,31 @@ public class Drive extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Drive(Motors motors, Encoders encoders, Joystick stick) {
+  public Drive(Motors motors, Encoders encoders, Gyroscope gyro, Joystick stick) {
     this.encoders=encoders;
     this.motors=motors;
     joystick=stick;
+    this.gyro=gyro;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(motors,encoders);
+    addRequirements(motors,encoders,gyro);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     //tuning the PID constants
-    tab= Shuffleboard.getTab("kP");
-    P=tab.add("P constant",0).getEntry();
-    kP=P.getDouble(0);
-    tab= Shuffleboard.getTab("kI");
-    I=tab.add("I constant",0).getEntry();
-    kI=I.getDouble(0);
-    tab= Shuffleboard.getTab("kD");
-    D=tab.add("D constant",0).getEntry();
-    kD=D.getDouble(0);
-    
+
+    // tab= Shuffleboard.getTab("kP");
+    // P=tab.add("P constant",0).getEntry();
+    kP=PIDConstants.kDrivetrainP;
+    // tab= Shuffleboard.getTab("kI");
+    // I=tab.add("I constant",0).getEntry();
+    kI=PIDConstants.kDrivetrainI;
+    // tab= Shuffleboard.getTab("kD");
+    // D=tab.add("D constant",0).getEntry();
+    kD=PIDConstants.kDrivetrainD;
+
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
     bearingControllerFrontLeft.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
@@ -84,13 +93,11 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
-
-
+    fieldOrientOffset=gyro.getBearing();
     if(previousBearingGoal!=joystick.getDirectionRadians())  
     {
       //updating the new goal if the joystick is moved
-      previousBearingGoal=joystick.getDirectionRadians();
+      previousBearingGoal=joystick.getDirectionRadians()+fieldOrientOffset;
       bearingControllerFrontLeft.setSetpoint(previousBearingGoal);
       bearingControllerFrontLeft.reset();
       bearingControllerFrontRight.setSetpoint(previousBearingGoal);

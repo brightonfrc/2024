@@ -64,13 +64,11 @@ public class Encoders extends SubsystemBase {
     //this should never happen, but just in case
     return 0.0;
   }
-
-  public enum TurnEncoder {
-    FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
+  public enum TurnEncoder{
+    FRONT_LEFT,FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
   }
-
-  public double motorTurned(TurnEncoder motorType){
-    switch (motorType){
+  public double motorTurned(TurnEncoder encoder){
+    switch (encoder){
       case FRONT_LEFT:
         //return frontLeft degrees turned
         distanceRotated=FrontLeftTurn.getDistance();

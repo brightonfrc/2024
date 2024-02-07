@@ -16,4 +16,10 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+
+  public static class PIDConstants {
+    public static final double kDrivetrainP = 1.0;
+    public static final double kDrivetrainI = 0.0;
+    public static final double kDrivetrainD = 0.0;
+  }
 }

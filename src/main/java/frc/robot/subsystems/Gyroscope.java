@@ -16,7 +16,6 @@ public class Gyroscope extends SubsystemBase {
     //returns bearing in radians
     convertedBearing= gyro.getAngle()%360;
     convertedBearing=convertedBearing/180*Math.PI;
-    
     return convertedBearing;
   }
 }
