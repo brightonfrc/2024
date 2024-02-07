@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.OperatorConstants;
 // here is where you put all your commands and subsystems;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
@@ -63,7 +64,7 @@ public class RobotContainer {
 
   private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
   // this is the button on the handle of the joystick
-  private JoystickButton snapButton = new JoystickButton(stick, 1);
+  private JoystickButton snapButton = new JoystickButton(stick, OperatorConstants.snapButtonNum);
 
 
 
