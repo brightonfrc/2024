@@ -2,23 +2,23 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import com.revrobotics.CANSparkMax;
 
 
 
 
 public class Motors extends SubsystemBase {
-  public static Talon frontLeftMove;
-  public static Talon frontLeftTurn;
-  public static Talon frontRightMove;
-  public static Talon frontRightTurn;
-  public static Talon backLeftMove;
-  public static Talon backLeftTurn;
-  public static Talon backRightMove;
-  public static Talon backRightTurn;
+  public static CANSparkMax frontLeftMove;
+  public static CANSparkMax frontLeftTurn;
+  public static CANSparkMax frontRightMove;
+  public static CANSparkMax frontRightTurn;
+  public static CANSparkMax backLeftMove;
+  public static CANSparkMax backLeftTurn;
+  public static CANSparkMax backRightMove;
+  public static CANSparkMax backRightTurn;
   
 
-  public Motors(Talon FrontLeftMove, Talon FrontLeftTurn, Talon FrontRightMove, Talon FrontRightTurn, Talon BackLeftMove, Talon BackLeftTurn, Talon BackRightMove, Talon BackRightTurn) {
+  public Motors(CANSparkMax FrontLeftMove, CANSparkMax FrontLeftTurn, CANSparkMax FrontRightMove, CANSparkMax FrontRightTurn, CANSparkMax BackLeftMove, CANSparkMax BackLeftTurn, CANSparkMax BackRightMove, CANSparkMax BackRightTurn) {
     frontLeftMove=FrontLeftMove;
     frontLeftTurn=FrontLeftTurn;
     frontRightMove=FrontRightMove;
@@ -27,12 +27,14 @@ public class Motors extends SubsystemBase {
     backLeftTurn=BackLeftTurn;
     backRightMove=BackRightMove;
     backRightTurn=BackRightTurn;
+
+    //setting all move motors to follow the Front Left motors
+    frontRightMove.follow(FrontLeftMove);
+    backLeftMove.follow(FrontLeftMove);
+    backRightMove.follow(FrontLeftMove);
   }
   public void setMoveMotors(double PIDoutput){
     frontLeftMove.set(PIDoutput);
-    frontRightMove.set(PIDoutput);
-    backLeftMove.set(PIDoutput);
-    backRightMove.set(PIDoutput);
   }
 
   public enum TurnMotor {
