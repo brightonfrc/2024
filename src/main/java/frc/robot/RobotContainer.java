@@ -16,11 +16,11 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.I2C;
-import com.kauailabs.navx.frc.AHRS;
-
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Encoder;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.I2C;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -35,14 +35,14 @@ public class RobotContainer {
   // variables are
   
   // remember to configure the acutal channels
-  private final Talon FrontLeftMove= new Talon(0);
-  private final Talon FrontLeftTurn= new Talon(2);
-  private final Talon FrontRightMove= new Talon(3);
-  private final Talon FrontRightTurn= new Talon(4);
-  private final Talon BackLeftMove= new Talon(5);
-  private final Talon BackLeftTurn = new Talon(6);
-  private final Talon BackRightMove= new Talon(7);
-  private final Talon BackRightTurn= new Talon(8);
+  private final CANSparkMax FrontLeftMove= new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax FrontLeftTurn= new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax FrontRightMove= new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax FrontRightTurn= new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax BackLeftMove= new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax BackLeftTurn = new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax BackRightMove= new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax BackRightTurn= new CANSparkMax(0,MotorType.kBrushless);
   private final Encoder frontLeftMove = new Encoder(0, 0);
   private final Encoder frontLeftTurn = new Encoder(0,0);
   private final Encoder frontRightMove = new Encoder(0, 0);
@@ -57,10 +57,10 @@ public class RobotContainer {
   private final Motors motors= new Motors(FrontLeftMove, FrontLeftTurn, FrontRightMove, FrontRightTurn, BackLeftMove, BackLeftTurn, BackRightMove, BackRightTurn);
   //motor radius is configured in mm and distance per pulse is still unkown
   private final Encoders encoders= new Encoders(frontLeftMove, frontLeftTurn, frontRightTurn, frontRightMove, backLeftMove, backLeftTurn, backRightMove, backRightTurn, 38.1, 0);
-  private final Gyroscope gyroSubsystem = new Gyroscope(gyro);
+  private final Gyroscope gyroscope = new Gyroscope(gyro);
+  // remember to set the joystick port
+  private Joystick stick = new Joystick(0);
   
-  
-  private Joystick stick = new Joystick(DriveConstants.joystickPort);
 
 
 
@@ -81,12 +81,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
 
-    
+  
   }
   private void defaultCommands(){
-    motors.setDefaultCommand(new Drive(motors,encoders,gyroSubsystem,stick));
+    motors.setDefaultCommand(new Drive(motors,encoders,gyroscope,stick));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
