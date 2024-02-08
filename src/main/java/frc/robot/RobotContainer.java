@@ -11,6 +11,8 @@ import frc.robot.commands.Snap;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
+import frc.robot.Constants.Ports;
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Gyroscope;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -36,14 +38,14 @@ public class RobotContainer {
   // variables are
   
   // remember to configure the acutal channels
-  private final CANSparkMax FrontLeftMove= new CANSparkMax(0,MotorType.kBrushless);
-  private final CANSparkMax FrontLeftTurn= new CANSparkMax(0,MotorType.kBrushless);
-  private final CANSparkMax FrontRightMove= new CANSparkMax(0,MotorType.kBrushless);
-  private final CANSparkMax FrontRightTurn= new CANSparkMax(0,MotorType.kBrushless);
-  private final CANSparkMax BackLeftMove= new CANSparkMax(0,MotorType.kBrushless);
-  private final CANSparkMax BackLeftTurn = new CANSparkMax(0,MotorType.kBrushless);
-  private final CANSparkMax BackRightMove= new CANSparkMax(0,MotorType.kBrushless);
-  private final CANSparkMax BackRightTurn= new CANSparkMax(0,MotorType.kBrushless);
+  private final CANSparkMax FrontLeftMove= new CANSparkMax(Ports.kDriveFrontLeftMove,MotorType.kBrushless);
+  private final CANSparkMax FrontLeftTurn= new CANSparkMax(Ports.kDriveFrontLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax FrontRightMove= new CANSparkMax(Ports.kDriveFrontRightMove,MotorType.kBrushless);
+  private final CANSparkMax FrontRightTurn= new CANSparkMax(Ports.kDriveFrontRightTurn,MotorType.kBrushless);
+  private final CANSparkMax BackLeftMove= new CANSparkMax(Ports.kDriveBackLeftMove,MotorType.kBrushless);
+  private final CANSparkMax BackLeftTurn = new CANSparkMax(Ports.kDriveBackLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax BackRightMove= new CANSparkMax(Ports.kDriveBackRightMove,MotorType.kBrushless);
+  private final CANSparkMax BackRightTurn= new CANSparkMax(Ports.kDriveBackRightTurn,MotorType.kBrushless);
   private final Encoder frontLeftMove = new Encoder(0, 0);
   private final Encoder frontLeftTurn = new Encoder(0,0);
   private final Encoder frontRightMove = new Encoder(0, 0);
