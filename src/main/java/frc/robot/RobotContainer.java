@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Encoder;
 import com.kauailabs.navx.frc.AHRS;
@@ -38,28 +39,28 @@ public class RobotContainer {
   // variables are
   
   // remember to configure the acutal channels
-  private final CANSparkMax FrontLeftMove= new CANSparkMax(Ports.kDriveFrontLeftMove,MotorType.kBrushless);
-  private final CANSparkMax FrontLeftTurn= new CANSparkMax(Ports.kDriveFrontLeftTurn,MotorType.kBrushless);
-  private final CANSparkMax FrontRightMove= new CANSparkMax(Ports.kDriveFrontRightMove,MotorType.kBrushless);
-  private final CANSparkMax FrontRightTurn= new CANSparkMax(Ports.kDriveFrontRightTurn,MotorType.kBrushless);
-  private final CANSparkMax BackLeftMove= new CANSparkMax(Ports.kDriveBackLeftMove,MotorType.kBrushless);
-  private final CANSparkMax BackLeftTurn = new CANSparkMax(Ports.kDriveBackLeftTurn,MotorType.kBrushless);
-  private final CANSparkMax BackRightMove= new CANSparkMax(Ports.kDriveBackRightMove,MotorType.kBrushless);
-  private final CANSparkMax BackRightTurn= new CANSparkMax(Ports.kDriveBackRightTurn,MotorType.kBrushless);
-  private final Encoder frontLeftMove = new Encoder(0, 0);
-  private final Encoder frontLeftTurn = new Encoder(0,0);
-  private final Encoder frontRightMove = new Encoder(0, 0);
-  private final Encoder frontRightTurn = new Encoder(0,0);
-  private final Encoder backLeftMove = new Encoder(0, 0);
-  private final Encoder backLeftTurn = new Encoder(0,0);
-  private final Encoder backRightMove = new Encoder(0, 0);
-  private final Encoder backRightTurn = new Encoder(0,0);
+  private final CANSparkMax frontLeftMove= new CANSparkMax(Ports.kDriveFrontLeftMove,MotorType.kBrushless);
+  private final CANSparkMax frontLeftTurn= new CANSparkMax(Ports.kDriveFrontLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax frontRightMove= new CANSparkMax(Ports.kDriveFrontRightMove,MotorType.kBrushless);
+  private final CANSparkMax frontRightTurn= new CANSparkMax(Ports.kDriveFrontRightTurn,MotorType.kBrushless);
+  private final CANSparkMax backLeftMove= new CANSparkMax(Ports.kDriveBackLeftMove,MotorType.kBrushless);
+  private final CANSparkMax backLeftTurn = new CANSparkMax(Ports.kDriveBackLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax backRightMove= new CANSparkMax(Ports.kDriveBackRightMove,MotorType.kBrushless);
+  private final CANSparkMax backRightTurn= new CANSparkMax(Ports.kDriveBackRightTurn,MotorType.kBrushless);
+  private final RelativeEncoder frontLeftMoveEncoder = frontLeftMove.getEncoder();
+  private final RelativeEncoder frontLeftTurnEncoder = frontLeftTurn.getEncoder();
+  private final RelativeEncoder frontRightMoveEncoder = frontRightMove.getEncoder();
+  private final RelativeEncoder frontRightTurnEncoder = frontRightTurn.getEncoder();
+  private final RelativeEncoder backLeftMoveEncoder = backLeftMove.getEncoder();
+  private final RelativeEncoder backLeftTurnEncoder = backLeftTurn.getEncoder();
+  private final RelativeEncoder backRightMoveEncoder = backRightMove.getEncoder();
+  private final RelativeEncoder backRightTurnEncoder = backRightTurn.getEncoder();
   private final AHRS gyro = new AHRS(I2C.Port.kMXP);
 
 
-  private final Motors motors= new Motors(FrontLeftMove, FrontLeftTurn, FrontRightMove, FrontRightTurn, BackLeftMove, BackLeftTurn, BackRightMove, BackRightTurn);
-  //motor radius is configured in mm and distance per pulse is still unkown
-  private final Encoders encoders= new Encoders(frontLeftMove, frontLeftTurn, frontRightTurn, frontRightMove, backLeftMove, backLeftTurn, backRightMove, backRightTurn, 38.1, 0);
+  private final Motors motors= new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
+  //motor radius is configured in mm and distance per rotation is still unkown
+  private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, 38.1, 0);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
   // remember to set the joystick port
 

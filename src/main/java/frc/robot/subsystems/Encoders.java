@@ -1,18 +1,19 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.Encoder;
+
+import com.revrobotics.RelativeEncoder;
 
 public class Encoders extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public static Encoder FrontLeftMove;
-  public static Encoder FrontLeftTurn;
-  public static Encoder FrontRightMove;
-  public static Encoder FrontRightTurn;
-  public static Encoder BackLeftMove;
-  public static Encoder BackLeftTurn;
-  public static Encoder BackRightMove;
-  public static Encoder BackRightTurn;
+  public RelativeEncoder frontLeftMove;
+  public RelativeEncoder frontLeftTurn;
+  public RelativeEncoder frontRightMove;
+  public RelativeEncoder frontRightTurn;
+  public RelativeEncoder backLeftMove;
+  public RelativeEncoder backLeftTurn;
+  public RelativeEncoder backRightMove;
+  public RelativeEncoder backRightTurn;
   //for calculating the degrees turned
   public double motorRadius;
   public double distanceRotated;
@@ -23,43 +24,54 @@ public class Encoders extends SubsystemBase {
   public double backLeftBearing;
   public double backRightBearing;
   
-  public Encoders(Encoder frontLeftMove, Encoder frontLeftTurn, Encoder frontRightTurn, Encoder frontRightMove, Encoder backLeftMove, Encoder backLeftTurn, Encoder backRightMove, Encoder backRightTurn, double motorRadius, double DistancePerPulse) {
-    FrontLeftMove=frontLeftMove;
-    FrontLeftTurn=frontLeftTurn;
-    FrontRightTurn=frontRightTurn;
-    FrontRightMove=frontRightMove;
-    BackLeftMove=backLeftMove;
-    BackLeftTurn=backLeftTurn;
-    BackRightMove=backRightMove;
-    BackRightTurn=backRightTurn;
-    FrontLeftMove.setDistancePerPulse(DistancePerPulse);
-    FrontRightMove.setDistancePerPulse(DistancePerPulse);
-    BackLeftMove.setDistancePerPulse(DistancePerPulse);
-    BackRightMove.setDistancePerPulse(DistancePerPulse);
-    FrontLeftTurn.setDistancePerPulse(DistancePerPulse);
-    FrontRightTurn.setDistancePerPulse(DistancePerPulse);
-    BackLeftTurn.setDistancePerPulse(DistancePerPulse);
-    BackRightTurn.setDistancePerPulse(DistancePerPulse);
-    this.motorRadius=motorRadius;
-    frontLeftBearing=0;
-    frontRightBearing=0;
-    backLeftBearing=0;
-    backRightBearing=0;
+  public Encoders(RelativeEncoder frontLeftMove, RelativeEncoder frontLeftTurn, RelativeEncoder frontRightTurn, RelativeEncoder frontRightMove, RelativeEncoder backLeftMove, RelativeEncoder backLeftTurn, RelativeEncoder backRightMove, RelativeEncoder backRightTurn, double motorRadius, double distancePerRotation) {
+    this.frontLeftMove = frontLeftMove;
+    this.frontLeftTurn = frontLeftTurn;
+    this.frontRightTurn = frontRightTurn;
+    this.frontRightMove = frontRightMove;
+    this.backLeftMove = backLeftMove;
+    this.backLeftTurn = backLeftTurn;
+    this.backRightMove = backRightMove;
+    this.backRightTurn = backRightTurn;
+
+    // Reset encoder positions
+    frontLeftMove.setPosition(0);
+    frontRightMove.setPosition(0);
+    backLeftMove.setPosition(0);
+    backRightMove.setPosition(0);
+    frontLeftTurn.setPosition(0);
+    frontRightTurn.setPosition(0);
+    backLeftTurn.setPosition(0);
+    backRightTurn.setPosition(0);
+
+    frontLeftMove.setPositionConversionFactor(distancePerRotation);
+    frontRightMove.setPositionConversionFactor(distancePerRotation);
+    backLeftMove.setPositionConversionFactor(distancePerRotation);
+    backRightMove.setPositionConversionFactor(distancePerRotation);
+    frontLeftTurn.setPositionConversionFactor(distancePerRotation);
+    frontRightTurn.setPositionConversionFactor(distancePerRotation);
+    backLeftTurn.setPositionConversionFactor(distancePerRotation);
+    backRightTurn.setPositionConversionFactor(distancePerRotation);
+    this.motorRadius = motorRadius;
+    frontLeftBearing = 0;
+    frontRightBearing = 0;
+    backLeftBearing = 0;
+    backRightBearing = 0;
   }
   public double getDistanceMoved(int motorNum){
     switch (motorNum){
       case 1:
         //return frontLeft distance
-        return FrontLeftMove.getDistance();
+        return frontLeftMove.getPosition();
       case 2:
         //return frontRight distance
-        return FrontRightMove.getDistance();
+        return frontRightMove.getPosition();
       case 3: 
         //return backLeft distance
-        return BackLeftMove.getDistance();
+        return backLeftMove.getPosition();
       case 4:    
         //return backRight distance
-        return BackRightMove.getDistance();
+        return backRightMove.getPosition();
     }
     //this should never happen, but just in case
     return 0.0;
@@ -71,39 +83,39 @@ public class Encoders extends SubsystemBase {
     switch (encoder){
       case FRONT_LEFT:
         //return frontLeft degrees turned
-        distanceRotated=FrontLeftTurn.getDistance();
+        distanceRotated = frontLeftTurn.getPosition();
         //using radians
-        deltaRadians= distanceRotated/motorRadius;
+        deltaRadians =  distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
-        frontLeftBearing+=deltaRadians;
-        frontLeftBearing=frontLeftBearing%(Math.PI*2);
+        frontLeftBearing += deltaRadians;
+        frontLeftBearing = frontLeftBearing%(Math.PI*2);
         return frontLeftBearing;
       case FRONT_RIGHT:
         //return frontLeft degrees turned
-        distanceRotated=FrontLeftTurn.getDistance();
+        distanceRotated = frontLeftTurn.getPosition();
         //using radians
-        deltaRadians= distanceRotated/motorRadius;
+        deltaRadians =  distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
-        frontRightBearing+=deltaRadians;
-        frontRightBearing=frontRightBearing%(Math.PI*2);
+        frontRightBearing += deltaRadians;
+        frontRightBearing = frontRightBearing%(Math.PI*2);
         return frontRightBearing;
       case BACK_LEFT: 
         //return frontLeft degrees turned
-        distanceRotated=FrontLeftTurn.getDistance();
+        distanceRotated = frontLeftTurn.getPosition();
         //using radians
-        deltaRadians= distanceRotated/motorRadius;
+        deltaRadians =  distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
-        backLeftBearing+=deltaRadians;
-        backLeftBearing=backLeftBearing%(Math.PI*2);
+        backLeftBearing += deltaRadians;
+        backLeftBearing = backLeftBearing%(Math.PI*2);
         return backLeftBearing;
       case BACK_RIGHT:    
         //return frontLeft degrees turned
-        distanceRotated=FrontLeftTurn.getDistance();
+        distanceRotated = frontLeftTurn.getPosition();
         //using radians
-        deltaRadians= distanceRotated/motorRadius;
+        deltaRadians = distanceRotated/motorRadius;
         //if deltaRadians is more than 2pi, I am resetting it down
-        backRightBearing+=deltaRadians;
-        backRightBearing=backRightBearing%(Math.PI*2);
+        backRightBearing += deltaRadians;
+        backRightBearing = backRightBearing%(Math.PI*2);
         return backRightBearing;
     }
     //this should never happen, but just so the code is happy
