@@ -133,17 +133,19 @@ public class Snap extends Command {
       currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
       motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing), TurnMotor.BACK_RIGHT);
     }
-    else{
+    else
+    {
       //robot ready to rotate
       joystickBearing=stick.getDirectionRadians();
-      // coding the data from 1 to 4
-      joystickBearing= joystickBearing/Math.PI*2;
-      // rounding to closest integer
-      int estimate=(int) joystickBearing;
-      joystickBearing=estimate;
-      //converting back to radians
-      snapGoal=joystickBearing*Math.PI/2;
-      if (snapGoal!=previousSnapGoal){
+
+      if (Math.abs(joystickBearing-previousSnapGoal)>Math.PI/4){  
+        // coding the data from 1 to 4
+        joystickBearing= joystickBearing/Math.PI*2;
+        // rounding to closest integer
+        int estimate=(int) joystickBearing;
+        joystickBearing=estimate;
+        //converting back to radians
+        snapGoal=joystickBearing*Math.PI/2;
         //updating the new goal if the joystick is moved
         robotBearingController.reset();
         robotBearingController.setSetpoint(snapGoal);
