@@ -26,11 +26,27 @@ public final class Constants {
   
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int snapButton=1;
+    public static final int AmpShotButton=2;
   }
 
   public static class PIDConstants {
     public static final double kDrivetrainP = 1.0;
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
+  }
+  public static class AprilTags{
+    //this stores the settings for the april tag detector config and the families to be detected by the detector
+    //remember to actually configure these
+    public static final int numThreads=1;
+    public static final float quadDecimate=2;
+    public static final float quadSigma=0;
+
+    //https://docs.wpilib.org/en/stable/docs/software/vision-processing/apriltag/apriltag-intro.html
+    public static final String family="36h11";
+
+    //this also stores the april tag numbers of all the major destinations
+    //remember to actually fill this in with the correct april tags
+    public static final int ampNum=0;
   }
 }
