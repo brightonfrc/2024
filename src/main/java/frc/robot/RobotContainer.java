@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj.Encoder;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
 
