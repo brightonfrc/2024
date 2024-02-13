@@ -41,12 +41,17 @@ public final class Constants {
     public static final int numThreads=1;
     public static final float quadDecimate=2;
     public static final float quadSigma=0;
-
+    //6.5 inches to mm
+    public static final double normalTagLength=165.1;
+    //pixel to mm scale factor
+    public static final double pixelScaler=1;
     //https://docs.wpilib.org/en/stable/docs/software/vision-processing/apriltag/apriltag-intro.html
     public static final String family="36h11";
-
-    //this also stores the april tag numbers of all the major destinations
+  }
+  public static class AmpAprilTag{
     //remember to actually fill this in with the correct april tags
     public static final int ampNum=0;
+    // the ratio of pixels to actual length at optimal distance from the robot to the april tag. 
+    public static final double optimalDistance=10;
   }
 }

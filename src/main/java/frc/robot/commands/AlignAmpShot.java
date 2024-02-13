@@ -10,16 +10,18 @@ import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
 import frc.robot.subsystems.TagDetector;
 import frc.robot.Constants.AprilTags;
+import frc.robot.Constants.AmpAprilTag;
 
-import javax.swing.text.html.HTML.Tag;
 
 import edu.wpi.first.apriltag.AprilTag;
+import org.opencv.core.Mat;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /** An example command that uses an example subsystem. */
 public class AlignAmpShot extends Command {
@@ -52,6 +54,10 @@ public class AlignAmpShot extends Command {
   public double kDRobotMove;
 
   public int tag;
+  public Mat image;
+  public boolean turningMode;
+  public double angleDiff;
+  public boolean readyToFire;
 
 
   /**
@@ -60,6 +66,8 @@ public class AlignAmpShot extends Command {
    * @param subsystem The subsystem used by this command.
    */
   public AlignAmpShot(Encoders encoders, Motors motors, TagDetector tagDetector) {
+    //remember to add the camera to this command. 
+
     this.encoders=encoders;
     this.motors=motors;
     this.tagDetector=tagDetector;
@@ -131,12 +139,49 @@ public class AlignAmpShot extends Command {
     //temporarily setting the movement controller to 1cm. 
     robotMovementController.setTolerance(0.01);
 
-    tag=AprilTags.ampNum;
+    tag=AmpAprilTag.ampNum;
+    turningMode=false;
+    readyToFire=false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    //take a picture
+    if (tagDetector.updateDetection(image, tag)){
+      //essntially, if an image is found, then run this code
+    }
+    else{
+      tab=Shuffleboard.getTab("AmpShot Command");
+      tab.add("Error","Image not found");
+    }
+    angleDiff=tagDetector.angleDiff();
+    if (angleDiff>Math.PI/360){
+      //allowing an error of 1 degrees. 
+
+      //enter turning mode
+
+      if(turningMode){  
+        //turn left slightly to check if the angle Diff is clockwise or anticlockwise. 
+        robotBearingController.setSetpoint(0);
+        motors.setMoveMotors(robotBearingController.calculate(angleDiff));
+      }
+    }
+    else{
+      
+      //exit turning mode
+      if (turningMode==false){
+        robotMovementController.setSetpoint(AmpAprilTag.optimalDistance);
+        motors.setMoveMotors(robotMovementController.calculate(tagDetector.pixelToHeightRatio()));
+        if (robotMovementController.atSetpoint()){
+          readyToFire=true;
+        }
+      }
+    }
+    if (readyToFire){
+      //end the command and schedule the fire command
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
