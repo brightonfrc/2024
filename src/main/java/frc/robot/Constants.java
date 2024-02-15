@@ -29,6 +29,11 @@ public final class Constants {
     public static int kDriveBackRightMove = 7;
     public static int kDriveBackRightTurn = 8;
   }
+
+  public static class MotorConstants{
+    public static double distancePerRotation=100;
+    public static double movementPerRotation=400;
+  }
   
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
