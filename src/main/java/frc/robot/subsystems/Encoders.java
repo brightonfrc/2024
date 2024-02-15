@@ -14,6 +14,12 @@ public class Encoders extends SubsystemBase {
   public RelativeEncoder backLeftTurn;
   public RelativeEncoder backRightMove;
   public RelativeEncoder backRightTurn;
+  //for calculating the distance moved
+  public double frontLeftPosition;
+  public double frontRightPosition;
+  public double backLeftPosition;
+  public double backRightPosition;
+  public double distanceMoved;
   //for calculating the degrees turned
   public double motorRadius;
   public double distanceRotated;
@@ -24,7 +30,7 @@ public class Encoders extends SubsystemBase {
   public double backLeftBearing;
   public double backRightBearing;
   
-  public Encoders(RelativeEncoder frontLeftMove, RelativeEncoder frontLeftTurn, RelativeEncoder frontRightTurn, RelativeEncoder frontRightMove, RelativeEncoder backLeftMove, RelativeEncoder backLeftTurn, RelativeEncoder backRightMove, RelativeEncoder backRightTurn, double motorRadius, double distancePerRotation) {
+  public Encoders(RelativeEncoder frontLeftMove, RelativeEncoder frontLeftTurn, RelativeEncoder frontRightTurn, RelativeEncoder frontRightMove, RelativeEncoder backLeftMove, RelativeEncoder backLeftTurn, RelativeEncoder backRightMove, RelativeEncoder backRightTurn, double motorRadius, double distancePerRotation, double movementPerRotation) {
     this.frontLeftMove = frontLeftMove;
     this.frontLeftTurn = frontLeftTurn;
     this.frontRightTurn = frontRightTurn;
@@ -33,6 +39,7 @@ public class Encoders extends SubsystemBase {
     this.backLeftTurn = backLeftTurn;
     this.backRightMove = backRightMove;
     this.backRightTurn = backRightTurn;
+
 
     // Reset encoder positions
     frontLeftMove.setPosition(0);
@@ -44,10 +51,12 @@ public class Encoders extends SubsystemBase {
     backLeftTurn.setPosition(0);
     backRightTurn.setPosition(0);
 
-    frontLeftMove.setPositionConversionFactor(distancePerRotation);
-    frontRightMove.setPositionConversionFactor(distancePerRotation);
-    backLeftMove.setPositionConversionFactor(distancePerRotation);
-    backRightMove.setPositionConversionFactor(distancePerRotation);
+    //the movement motors use movement per rotation because 1 rotation for the moveement motor doesn't mean that 
+    //the robot moves forward by precisely the circumference of the motor
+    frontLeftMove.setPositionConversionFactor(movementPerRotation);
+    frontRightMove.setPositionConversionFactor(movementPerRotation);
+    backLeftMove.setPositionConversionFactor(movementPerRotation);
+    backRightMove.setPositionConversionFactor(movementPerRotation);
     frontLeftTurn.setPositionConversionFactor(distancePerRotation);
     frontRightTurn.setPositionConversionFactor(distancePerRotation);
     backLeftTurn.setPositionConversionFactor(distancePerRotation);
@@ -57,21 +66,33 @@ public class Encoders extends SubsystemBase {
     frontRightBearing = 0;
     backLeftBearing = 0;
     backRightBearing = 0;
+    frontLeftPosition=0;
+    frontRightPosition=0;
+    backLeftPosition=0;
+    backRightPosition=0;
   }
   public double getDistanceMoved(int motorNum){
     switch (motorNum){
       case 1:
         //return frontLeft distance
-        return frontLeftMove.getPosition();
+        distanceMoved= frontLeftMove.getPosition()-frontLeftPosition;
+        frontLeftPosition=frontLeftMove.getPosition();
+        return distanceMoved;
       case 2:
         //return frontRight distance
-        return frontRightMove.getPosition();
+        distanceMoved= frontRightMove.getPosition()-frontRightPosition;
+        frontRightPosition=frontRightMove.getPosition();
+        return distanceMoved;
       case 3: 
         //return backLeft distance
-        return backLeftMove.getPosition();
+        distanceMoved= backLeftMove.getPosition()-backLeftPosition;
+        backLeftPosition=backLeftMove.getPosition();
+        return distanceMoved;
       case 4:    
         //return backRight distance
-        return backRightMove.getPosition();
+        distanceMoved= backRightMove.getPosition()-backRightPosition;
+        backRightPosition=backRightMove.getPosition();
+        return distanceMoved;
     }
     //this should never happen, but just in case
     return 0.0;

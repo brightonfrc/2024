@@ -4,11 +4,13 @@
 
 package frc.robot;
 
-import frc.robot.commands.AlignAmpShot;
+import frc.robot.commands.AlignWithAprilTag;
 // here is where you put all your commands and subsystems;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
+import frc.robot.commands.AlignWithAprilTag;
+import frc.robot.commands.MoveToAmp;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
@@ -16,9 +18,11 @@ import frc.robot.subsystems.Gyroscope;
 import frc.robot.subsystems.TagDetector;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants.MotorConstants;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.apriltag.AprilTagDetector;
@@ -65,7 +69,7 @@ public class RobotContainer {
 
   private final Motors motors= new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
   //motor radius is configured in mm and distance per rotation is still unkown
-  private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, 38.1, 0);
+  private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, 38.1, MotorConstants.distancePerRotation,MotorConstants.movementPerRotation);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
   private final TagDetector tagDetector= new TagDetector(detector, configuration);
   
@@ -76,7 +80,8 @@ public class RobotContainer {
   private JoystickButton snapButton = new JoystickButton(stick, OperatorConstants.snapButton);
   private JoystickButton ampShotButton= new JoystickButton(stick, OperatorConstants.AmpShotButton);
 
-
+  //remember to add the actual shoot into amp command in here. 
+  private final SequentialCommandGroup autoAmpShot= new SequentialCommandGroup(new AlignWithAprilTag(encoders, motors, tagDetector), new MoveToAmp(encoders, motors, tagDetector));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -96,7 +101,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     snapButton.whileTrue(new Snap(motors, encoders, gyroscope, stick));
-    ampShotButton.whileTrue(new AlignAmpShot(encoders, motors, tagDetector));
+    ampShotButton.whileTrue(autoAmpShot);
   
   }
   private void defaultCommands(){

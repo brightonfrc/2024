@@ -23,6 +23,11 @@ public final class Constants {
     public static int kDriveBackRightMove = 7;
     public static int kDriveBackRightTurn = 8;
   }
+
+  public static class MotorConstants{
+    public static double distancePerRotation=10.0;
+    public static double movementPerRotation=10.0;
+  }
   
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -43,15 +48,17 @@ public final class Constants {
     public static final float quadSigma=0;
     //6.5 inches to mm
     public static final double normalTagLength=165.1;
-    //pixel to mm scale factor
-    public static final double pixelScaler=1;
+    //the number of pixels the border of the april tag will have at 1m. 
+    public static final double pixelsAtMeter=400;
+    //the X coordinate of the center when the april tag is aligned with the camera. 
+    public static final double centerXCoordinate=300;
     //https://docs.wpilib.org/en/stable/docs/software/vision-processing/apriltag/apriltag-intro.html
     public static final String family="36h11";
   }
   public static class AmpAprilTag{
     //remember to actually fill this in with the correct april tags
     public static final int ampNum=0;
-    // the ratio of pixels to actual length at optimal distance from the robot to the april tag. 
-    public static final double optimalDistance=10;
+    //the optimal distance at which the note can be inserted into the amp in m
+    public static final double optimalDistance=0.1;
   }
 }
