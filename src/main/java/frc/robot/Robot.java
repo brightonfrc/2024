@@ -20,11 +20,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private Talon FrontLeftMove;
-  private Talon FrontRightMove;
-  private Talon BackLeftMove;
-  private Talon BackRightMove;
-  private Encoder frontLeftMove;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -94,27 +90,14 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    FrontLeftMove= new Talon(0);
-    FrontRightMove= new Talon(0);
-    BackLeftMove= new Talon(0);
-    BackRightMove= new Talon(0);
-    frontLeftMove = new Encoder(0, 0);
-    FrontLeftMove.set(0.1);
-    FrontRightMove.set(0.1);
-    BackLeftMove.set(0.1);
-    BackRightMove.set(0.1);
+    
   }
 
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    if (frontLeftMove.get()==100){
-      FrontLeftMove.set(0);
-      FrontRightMove.set(0);
-      BackLeftMove.set(0);
-      BackRightMove.set(0);
-    }
+    
   }
 
   /** This function is called once when the robot is first started up. */

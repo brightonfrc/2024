@@ -28,10 +28,13 @@ public class Drive extends Command {
   public double kI;
   public double kD;
 
-  // public ShuffleboardTab tab;
+  public ShuffleboardTab tab;
   // public GenericEntry P;
   // public GenericEntry I;
   // public GenericEntry D;
+  
+  public GenericEntry joystickBearing;
+  public GenericEntry joystickMagnitude;
 
 
   private double currentBearing;
@@ -94,6 +97,12 @@ public class Drive extends Command {
   @Override
   public void execute() {
     fieldOrientOffset=gyro.getBearing();
+    tab=Shuffleboard.getTab("Joystick Input");
+    joystickBearing=tab.add("joystick Bearing",0).getEntry();
+    joystickBearing.setDouble(joystick.getDirectionRadians());
+    tab=Shuffleboard.getTab("Joystick Input");
+    joystickMagnitude=tab.add("Joystick Magnitude", 0).getEntry();
+    joystickMagnitude.setDouble(joystick.getMagnitude());
     if(previousBearingGoal!=joystick.getDirectionRadians())  
     {
       //updating the new goal if the joystick is moved
@@ -119,7 +128,7 @@ public class Drive extends Command {
     currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
     motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_RIGHT);
     //setting the speed, but at 0.5 scale to ensure no one dies
-    motors.setMoveMotors(joystick.getMagnitude()*0.5);
+    motors.setMoveMotors(joystick.getMagnitude()*0.1);
   }
 
   // Called once the command ends or is interrupted.
