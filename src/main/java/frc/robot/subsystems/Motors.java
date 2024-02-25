@@ -31,10 +31,11 @@ public class Motors extends SubsystemBase {
     //setting all move motors to follow the Front Left motors
     frontRightMove.follow(FrontLeftMove);
     backLeftMove.follow(FrontLeftMove);
-    backRightMove.follow(FrontLeftMove);
   }
   public void setMoveMotors(double PIDoutput){
     frontLeftMove.set(PIDoutput);
+    //backRightMotor is inverted
+    backRightMove.set(PIDoutput);
   }
 
   public enum TurnMotor {

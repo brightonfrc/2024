@@ -34,13 +34,13 @@ public class Drive extends Command {
   // public GenericEntry I;
   // public GenericEntry D;
   
-  public GenericEntry joystickBearing;
-  public GenericEntry joystickMagnitude;
+
 
 
   private double currentBearing;
   private double previousBearingGoal;
   private double fieldOrientOffset;
+  private double joystickBearing;
 
 
   /**
@@ -97,19 +97,23 @@ public class Drive extends Command {
     motors.setTurnMotors(0,TurnMotor.FRONT_RIGHT);
     motors.setTurnMotors(0,TurnMotor.BACK_LEFT);
     motors.setTurnMotors(0,TurnMotor.BACK_RIGHT);
-    SmartDashboard.putBoolean("In Command", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    fieldOrientOffset=gyro.getBearing();
-    SmartDashboard.putNumber("joystick/bearing",joystick.getDirectionRadians());
     SmartDashboard.putNumber("joystick Magnitude", joystick.getMagnitude());
-    if(previousBearingGoal!=joystick.getDirectionRadians()-fieldOrientOffset)  
+    //Adding Pi to the joystick output so that it is within the range 0 to 2 pi
+    joystickBearing=joystick.getDirectionRadians();
+    if (joystickBearing<0){
+      joystickBearing+=Math.PI*2;
+    }
+    SmartDashboard.putNumber("joystick/bearing",joystickBearing);
+    //I won't update the new bearing unless it is 1 degree different to the old bearing. 
+    if(Math.abs(previousBearingGoal-joystickBearing)>Math.PI/360)  
     {
       //updating the new goal if the joystick is moved
-      previousBearingGoal=joystick.getDirectionRadians()-fieldOrientOffset;
+      previousBearingGoal=joystickBearing;
       bearingControllerFrontLeft.setSetpoint(previousBearingGoal);
       bearingControllerFrontLeft.reset();
       bearingControllerFrontRight.setSetpoint(previousBearingGoal);
@@ -119,19 +123,26 @@ public class Drive extends Command {
       bearingControllerBackRight.setSetpoint(previousBearingGoal);
       bearingControllerBackRight.reset();
     }
-    //currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
-    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.FRONT_LEFT);
+    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
+    SmartDashboard.putNumber("Front left PID output", bearingControllerFrontLeft.calculate(currentBearing)*0.5);
+    SmartDashboard.putNumber("Front Left Setpoint",bearingControllerFrontLeft.getSetpoint());
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.5, TurnMotor.FRONT_LEFT);
+    SmartDashboard.putNumber("Front left Bearing", currentBearing);
   
-    //currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
-    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.FRONT_RIGHT);
-
-    //currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
-    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.BACK_LEFT);
-    
-    //currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
-    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.BACK_RIGHT);
+    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
+    motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing)*0.5, TurnMotor.FRONT_RIGHT);
+    SmartDashboard.putNumber("Front right Bearing", currentBearing);
+  
+    currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
+    motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing)*0.5, TurnMotor.BACK_LEFT);
+    SmartDashboard.putNumber("Back left Bearing", currentBearing);
+  
+    currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
+    motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing)*0.5, TurnMotor.BACK_RIGHT);
+    SmartDashboard.putNumber("Back right Bearing", currentBearing);
+  
     //setting the speed, but at 0.1 scale to ensure no one dies
-    motors.setMoveMotors(joystick.getMagnitude()*0.1);
+    motors.setMoveMotors(joystick.getMagnitude()*0.25);
   }
 
   // Called once the command ends or is interrupted.

@@ -31,7 +31,6 @@ public final class Constants {
   }
 
   public static class MotorConstants{
-    public static double distancePerRotation=100;
     public static double movementPerRotation=400;
   }
   
@@ -40,7 +39,7 @@ public final class Constants {
   }
 
   public static class PIDConstants {
-    public static final double kDrivetrainP = 1.0;
+    public static final double kDrivetrainP = 0.2;
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
   }

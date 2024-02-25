@@ -32,7 +32,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    SmartDashboard.putBoolean("Initialised",true);
   }
 
   /**
@@ -49,7 +48,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putBoolean("TelePeriodic Running", true);
   }
 
   /** This function is called once each time the robot enters Disabled mode. */

@@ -63,7 +63,7 @@ public class RobotContainer {
 
   private final Motors motors= new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
   //motor radius is configured in mm and distance per rotation is still unkown
-  private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, 38.1, MotorConstants.distancePerRotation,MotorConstants.movementPerRotation);
+  private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, MotorConstants.movementPerRotation);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
   // remember to set the joystick port
 
