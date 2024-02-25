@@ -2,18 +2,19 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 
 public class Encoders extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public RelativeEncoder frontLeftMove;
-  public RelativeEncoder frontLeftTurn;
-  public RelativeEncoder frontRightMove;
-  public RelativeEncoder frontRightTurn;
-  public RelativeEncoder backLeftMove;
-  public RelativeEncoder backLeftTurn;
-  public RelativeEncoder backRightMove;
-  public RelativeEncoder backRightTurn;
+  public AbsoluteEncoder frontLeftMove;
+  public AbsoluteEncoder frontLeftTurn;
+  public AbsoluteEncoder frontRightMove;
+  public AbsoluteEncoder frontRightTurn;
+  public AbsoluteEncoder backLeftMove;
+  public AbsoluteEncoder backLeftTurn;
+  public AbsoluteEncoder backRightMove;
+  public AbsoluteEncoder backRightTurn;
   //for calculating the distance moved
   public double frontLeftPosition;
   public double frontRightPosition;
@@ -30,7 +31,7 @@ public class Encoders extends SubsystemBase {
   public double backLeftBearing;
   public double backRightBearing;
   
-  public Encoders(RelativeEncoder frontLeftMove, RelativeEncoder frontLeftTurn, RelativeEncoder frontRightTurn, RelativeEncoder frontRightMove, RelativeEncoder backLeftMove, RelativeEncoder backLeftTurn, RelativeEncoder backRightMove, RelativeEncoder backRightTurn, double motorRadius, double distancePerRotation, double movementPerRotation) {
+  public Encoders(AbsoluteEncoder frontLeftMove, AbsoluteEncoder frontLeftTurn, AbsoluteEncoder frontRightTurn, AbsoluteEncoder frontRightMove, AbsoluteEncoder backLeftMove, AbsoluteEncoder backLeftTurn, AbsoluteEncoder backRightMove, AbsoluteEncoder backRightTurn, double motorRadius, double distancePerRotation, double movementPerRotation) {
     this.frontLeftMove = frontLeftMove;
     this.frontLeftTurn = frontLeftTurn;
     this.frontRightTurn = frontRightTurn;
@@ -41,15 +42,7 @@ public class Encoders extends SubsystemBase {
     this.backRightTurn = backRightTurn;
 
 
-    // Reset encoder positions
-    frontLeftMove.setPosition(0);
-    frontRightMove.setPosition(0);
-    backLeftMove.setPosition(0);
-    backRightMove.setPosition(0);
-    frontLeftTurn.setPosition(0);
-    frontRightTurn.setPosition(0);
-    backLeftTurn.setPosition(0);
-    backRightTurn.setPosition(0);
+ 
 
     //the movement motors use movement per rotation because 1 rotation for the moveement motor doesn't mean that 
     //the robot moves forward by precisely the circumference of the motor

@@ -16,12 +16,15 @@ import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Gyroscope;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
@@ -47,14 +50,14 @@ public class RobotContainer {
   private final CANSparkMax backLeftTurn = new CANSparkMax(Ports.kDriveBackLeftTurn,MotorType.kBrushless);
   private final CANSparkMax backRightMove= new CANSparkMax(Ports.kDriveBackRightMove,MotorType.kBrushless);
   private final CANSparkMax backRightTurn= new CANSparkMax(Ports.kDriveBackRightTurn,MotorType.kBrushless);
-  private final RelativeEncoder frontLeftMoveEncoder = frontLeftMove.getEncoder();
-  private final RelativeEncoder frontLeftTurnEncoder = frontLeftTurn.getEncoder();
-  private final RelativeEncoder frontRightMoveEncoder = frontRightMove.getEncoder();
-  private final RelativeEncoder frontRightTurnEncoder = frontRightTurn.getEncoder();
-  private final RelativeEncoder backLeftMoveEncoder = backLeftMove.getEncoder();
-  private final RelativeEncoder backLeftTurnEncoder = backLeftTurn.getEncoder();
-  private final RelativeEncoder backRightMoveEncoder = backRightMove.getEncoder();
-  private final RelativeEncoder backRightTurnEncoder = backRightTurn.getEncoder();
+  private final AbsoluteEncoder frontLeftMoveEncoder = frontLeftMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder frontLeftTurnEncoder = frontLeftTurn.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder frontRightMoveEncoder = frontRightMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder frontRightTurnEncoder = frontRightTurn.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backLeftMoveEncoder = backLeftMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backLeftTurnEncoder = backLeftTurn.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backRightMoveEncoder = backRightMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backRightTurnEncoder = backRightTurn.getAbsoluteEncoder(Type.kDutyCycle);
   private final AHRS gyro = new AHRS(I2C.Port.kMXP);
 
 
@@ -87,12 +90,10 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
-
-    snapButton.whileTrue(new Snap(motors, encoders, gyroscope, stick));
   
   }
   private void defaultCommands(){
+    SmartDashboard.putBoolean("Set default command", false);
     motors.setDefaultCommand(new Drive(motors,encoders,gyroscope,stick));
   }
   /**

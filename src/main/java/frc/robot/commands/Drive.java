@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /** An example command that uses an example subsystem. */
 public class Drive extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
@@ -91,22 +92,24 @@ public class Drive extends Command {
     bearingControllerBackRight.enableContinuousInput(0, Math.PI*2);
     //setting tolerance to +=1 degree (radians equivalent)
     bearingControllerBackRight.setTolerance(Math.PI/180);
+    motors.setMoveMotors(0);
+    motors.setTurnMotors(0,TurnMotor.FRONT_LEFT);
+    motors.setTurnMotors(0,TurnMotor.FRONT_RIGHT);
+    motors.setTurnMotors(0,TurnMotor.BACK_LEFT);
+    motors.setTurnMotors(0,TurnMotor.BACK_RIGHT);
+    SmartDashboard.putBoolean("In Command", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     fieldOrientOffset=gyro.getBearing();
-    tab=Shuffleboard.getTab("Joystick Input");
-    joystickBearing=tab.add("joystick Bearing",0).getEntry();
-    joystickBearing.setDouble(joystick.getDirectionRadians());
-    tab=Shuffleboard.getTab("Joystick Input");
-    joystickMagnitude=tab.add("Joystick Magnitude", 0).getEntry();
-    joystickMagnitude.setDouble(joystick.getMagnitude());
-    if(previousBearingGoal!=joystick.getDirectionRadians())  
+    SmartDashboard.putNumber("joystick/bearing",joystick.getDirectionRadians());
+    SmartDashboard.putNumber("joystick Magnitude", joystick.getMagnitude());
+    if(previousBearingGoal!=joystick.getDirectionRadians()-fieldOrientOffset)  
     {
       //updating the new goal if the joystick is moved
-      previousBearingGoal=joystick.getDirectionRadians()+fieldOrientOffset;
+      previousBearingGoal=joystick.getDirectionRadians()-fieldOrientOffset;
       bearingControllerFrontLeft.setSetpoint(previousBearingGoal);
       bearingControllerFrontLeft.reset();
       bearingControllerFrontRight.setSetpoint(previousBearingGoal);
@@ -116,18 +119,18 @@ public class Drive extends Command {
       bearingControllerBackRight.setSetpoint(previousBearingGoal);
       bearingControllerBackRight.reset();
     }
-    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
+    //currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
+    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.FRONT_LEFT);
   
-    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
+    //currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
+    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.FRONT_RIGHT);
 
-    currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
+    //currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
+    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.BACK_LEFT);
     
-    currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_RIGHT);
-    //setting the speed, but at 0.5 scale to ensure no one dies
+    //currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
+    //motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.1, TurnMotor.BACK_RIGHT);
+    //setting the speed, but at 0.1 scale to ensure no one dies
     motors.setMoveMotors(joystick.getMagnitude()*0.1);
   }
 
