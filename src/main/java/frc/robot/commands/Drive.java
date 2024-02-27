@@ -105,6 +105,8 @@ public class Drive extends Command {
     SmartDashboard.putNumber("joystick Magnitude", joystick.getMagnitude());
     //Adding Pi to the joystick output so that it is within the range 0 to 2 pi
     joystickBearing=joystick.getDirectionRadians();
+    fieldOrientOffset=gyro.getBearing();
+    joystickBearing-=fieldOrientOffset;
     if (joystickBearing<0){
       joystickBearing+=Math.PI*2;
     }
