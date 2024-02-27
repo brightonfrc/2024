@@ -5,6 +5,7 @@ import frc.robot.subsystems.Encoders.TurnEncoder;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
 import frc.robot.subsystems.Gyroscope;
+import frc.robot.Constants.PIDConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.networktables.GenericEntry;
@@ -64,26 +65,14 @@ public class Snap extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    tab= Shuffleboard.getTab("kPMotor");
-    P=tab.add("Motor P constant",0).getEntry();
-    kP=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIMotor");
-    I=tab.add("Motor I constant",0).getEntry();
-    kI=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDMotor");
-    D=tab.add("Motor D constant",0).getEntry();
-    kD=D.getDouble(0);
+    kP=PIDConstants.kDrivetrainP;
+    kI=PIDConstants.kDrivetrainI;
+    kD=PIDConstants.kDrivetrainD;
 
-    tab= Shuffleboard.getTab("kPRobot");
-    P=tab.add("Robot P constant",0).getEntry();
-    kPRobot=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIRobot");
-    I=tab.add("Robot I constant",0).getEntry();
-    kIRobot=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDRobot");
-    D=tab.add("Robot D constant",0).getEntry();
-    kDRobot=D.getDouble(0);
-
+    kPRobot=PIDConstants.kRobotTurningP;
+    kIRobot=PIDConstants.kRobotTurningI;
+    kDRobot=PIDConstants.kRobotTurningD;
+    
     // first the turn motors need to get ready for turning
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
     bearingControllerFrontLeft.enableContinuousInput(0, 2*Math.PI);
