@@ -111,6 +111,7 @@ public class Drive extends Command {
       joystickBearing+=Math.PI*2;
     }
     SmartDashboard.putNumber("joystick/bearing",joystickBearing);
+    SmartDashboard.putNumber("gyro offset", fieldOrientOffset);
     //I won't update the new bearing unless it is 1 degree different to the old bearing. 
     if(Math.abs(previousBearingGoal-joystickBearing)>Math.PI/360)  
     {
@@ -126,8 +127,6 @@ public class Drive extends Command {
       bearingControllerBackRight.reset();
     }
     currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
-    SmartDashboard.putNumber("Front left PID output", bearingControllerFrontLeft.calculate(currentBearing)*0.5);
-    SmartDashboard.putNumber("Front Left Setpoint",bearingControllerFrontLeft.getSetpoint());
     motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.5, TurnMotor.FRONT_LEFT);
     SmartDashboard.putNumber("Front left Bearing", currentBearing);
   
