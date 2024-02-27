@@ -10,6 +10,7 @@ import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
 import frc.robot.subsystems.TagDetector;
 import frc.robot.Constants.AmpAprilTag;
+import frc.robot.Constants.PIDConstants;
 
 
 import org.opencv.core.Mat;
@@ -80,25 +81,14 @@ public class AlignWithAprilTag extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    tab= Shuffleboard.getTab("kPMotor");
-    P=tab.add("Motor P constant",0).getEntry();
-    kP=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIMotor");
-    I=tab.add("Motor I constant",0).getEntry();
-    kI=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDMotor");
-    D=tab.add("Motor D constant",0).getEntry();
-    kD=D.getDouble(0);
+    kP=PIDConstants.kDrivetrainP;
+    kI=PIDConstants.kDrivetrainI;
+    kD=PIDConstants.kDrivetrainD;
 
-    tab= Shuffleboard.getTab("kPRobotTurn");
-    P=tab.add("Robot P constant",0).getEntry();
-    kPRobotTurn=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIRobotTurn");
-    I=tab.add("Robot I constant",0).getEntry();
-    kIRobotTurn=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDRobotTurn");
-    D=tab.add("Robot D constant",0).getEntry();
-    kDRobotTurn=D.getDouble(0);
+
+    kPRobotTurn=PIDConstants.kRobotTurnP;
+    kIRobotTurn=PIDConstants.kRobotTurnI;
+    kDRobotTurn=PIDConstants.kRobotTurnD;
 
     //the setpoint is set in a way that will cause the robot to enter turning mode, 
     //but it does not necessarily have to be used. 

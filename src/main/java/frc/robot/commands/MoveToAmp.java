@@ -10,6 +10,7 @@ import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
 import frc.robot.subsystems.TagDetector;
 import frc.robot.Constants.AmpAprilTag;
+import frc.robot.Constants.PIDConstants;
 
 
 import org.opencv.core.Mat;
@@ -81,25 +82,13 @@ public class MoveToAmp extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    tab= Shuffleboard.getTab("kPMotor");
-    P=tab.add("Motor P constant",0).getEntry();
-    kP=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIMotor");
-    I=tab.add("Motor I constant",0).getEntry();
-    kI=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDMotor");
-    D=tab.add("Motor D constant",0).getEntry();
-    kD=D.getDouble(0);
+    kP=PIDConstants.kDrivetrainP;
+    kI=PIDConstants.kDrivetrainI;
+    kD=PIDConstants.kDrivetrainD;
 
-    tab= Shuffleboard.getTab("kPRobotMove");
-    P=tab.add("Robot P constant",0).getEntry();
-    kDRobotMove=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIRobotMove");
-    I=tab.add("Robot I constant",0).getEntry();
-    kIRobotMove=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDRobotMove");
-    D=tab.add("Robot D constant",0).getEntry();
-    kPRobotMove=D.getDouble(0);
+    kPRobotMove=PIDConstants.kRobotMoveP;
+    kIRobotMove=PIDConstants.kRobotMoveI;
+    kDRobotMove=PIDConstants.kRobotMoveD;
 
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
     bearingControllerFrontLeft.enableContinuousInput(0, 2*Math.PI);

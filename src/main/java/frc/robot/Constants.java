@@ -36,9 +36,15 @@ public final class Constants {
   }
 
   public static class PIDConstants {
-    public static final double kDrivetrainP = 1.0;
+    public static final double kDrivetrainP = 0.2;
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
+    public static final double kRobotTurnP = 0.2;
+    public static final double kRobotTurnI = 0.0;
+    public static final double kRobotTurnD = 0.0;
+    public static final double kRobotMoveP = 0.2;
+    public static final double kRobotMoveI = 0.0;
+    public static final double kRobotMoveD = 0.0;
   }
   public static class AprilTags{
     //this stores the settings for the april tag detector config and the families to be detected by the detector
