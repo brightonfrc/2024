@@ -10,7 +10,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import java.lang.Math;
 
 /** An example command that uses an example subsystem. */
 public class Snap extends Command {
@@ -110,6 +113,13 @@ public class Snap extends Command {
     robotBearingController= new PIDController(kPRobot, kIRobot, kDRobot);
     robotBearingController.enableContinuousInput(0, 2*Math.PI);
     robotBearingController.setTolerance(Math.PI/360);
+
+    //setting all the motors to zero
+    motors.setTurnMotors(0, TurnMotor.FRONT_LEFT);
+    motors.setTurnMotors(0, TurnMotor.FRONT_RIGHT);
+    motors.setTurnMotors(0, TurnMotor.BACK_LEFT);
+    motors.setTurnMotors(0, TurnMotor.BACK_RIGHT);
+    motors.setMoveMotors(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -137,13 +147,15 @@ public class Snap extends Command {
     {
       //robot ready to rotate
       joystickBearing=stick.getDirectionRadians();
-
+      //essentially I won't bother to update this unless the bearing difference is more than 45 degrees
       if (Math.abs(joystickBearing-previousSnapGoal)>Math.PI/4){  
         // coding the data from 1 to 4
         joystickBearing= joystickBearing/Math.PI*2;
         // rounding to closest integer
-        int estimate=(int) joystickBearing;
+        int estimate= (int) Math.round(joystickBearing);
         joystickBearing=estimate;
+        //adding this because I got a funny feeling about the fact that it is rounded to a long
+        SmartDashboard.getNumber("approximation", estimate);
         //converting back to radians
         snapGoal=joystickBearing*Math.PI/2;
         //updating the new goal if the joystick is moved
