@@ -40,8 +40,11 @@ public final class Constants {
   }
 
   public static class PIDConstants {
-    public static final double kDrivetrainP = 1.0;
+    public static final double kDrivetrainP = 0.2;
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
+    public static final double kRobotTurnP = 0.2;
+    public static final double kRobotTurnI = 0.0;
+    public static final double kRobotTurnD = 0.0;
   }
 }
