@@ -108,16 +108,16 @@ public class Drive extends Command {
       bearingControllerBackRight.reset();
     }
     currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing)*0.5, TurnMotor.FRONT_LEFT);
   
     currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
+    motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing)*0.5, TurnMotor.FRONT_RIGHT);
 
     currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
+    motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing)*0.5, TurnMotor.BACK_LEFT);
     
     currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
-    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.BACK_RIGHT);
+    motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing)*0.5, TurnMotor.BACK_RIGHT);
     //setting the speed, but at 0.5 scale to ensure no one dies
     motors.setMoveMotors(joystick.getMagnitude()*0.5);
   }

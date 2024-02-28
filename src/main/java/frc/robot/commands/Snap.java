@@ -109,6 +109,7 @@ public class Snap extends Command {
     motors.setTurnMotors(0, TurnMotor.BACK_LEFT);
     motors.setTurnMotors(0, TurnMotor.BACK_RIGHT);
     motors.setMoveMotors(0);
+    SmartDashboard.putBoolean("Command active", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
