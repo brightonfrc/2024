@@ -12,6 +12,7 @@ import frc.robot.subsystems.TagDetector;
 import frc.robot.Constants.AmpAprilTag;
 import frc.robot.Constants.PIDConstants;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
 
 import org.opencv.core.Mat;
 
@@ -19,6 +20,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -127,6 +129,7 @@ public class AlignWithAprilTag extends Command {
     angleDiff=10;
     firstIteration=true;
     orientationEnter=true;
+    SmartDashboard.putBoolean("Entered align Command", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

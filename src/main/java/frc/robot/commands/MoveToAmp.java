@@ -19,6 +19,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -118,6 +119,7 @@ public class MoveToAmp extends Command {
     tag=AmpAprilTag.ampNum;
     firstAngleIteration=true;
     firstMovementIteration=true;
+    SmartDashboard.putBoolean("Entered move Command", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
