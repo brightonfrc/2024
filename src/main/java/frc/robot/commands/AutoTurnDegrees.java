@@ -62,33 +62,23 @@ public class AutoTurnDegrees extends Command {
     kIRobotTurn=PIDConstants.kRobotTurnI;
     kDRobotTurn=PIDConstants.kRobotTurnD;
 
-    frontLeftBearingController.setP(kP);
-    frontLeftBearingController.setI(kI);
-    frontLeftBearingController.setD(kD);
+    frontLeftBearingController= new PIDController(kP, kI, kD);
     frontLeftBearingController.enableContinuousInput(0, Math.PI*2);
     frontLeftBearingController.setSetpoint(Math.PI/4);
 
-    frontRightBearingController.setP(kP);
-    frontRightBearingController.setI(kI);
-    frontRightBearingController.setD(kD);
+    frontRightBearingController= new PIDController(kP, kI, kD);
     frontRightBearingController.enableContinuousInput(0, Math.PI*2);
     frontRightBearingController.setSetpoint(Math.PI*3/4);
 
-    backLeftBearingController.setP(kP);
-    backLeftBearingController.setI(kI);
-    backLeftBearingController.setD(kD);
+    backLeftBearingController= new PIDController(kP, kI, kD);
     backLeftBearingController.enableContinuousInput(0, Math.PI*2);
     backLeftBearingController.setSetpoint(Math.PI*5/4);
 
-    backRightBearingController.setP(kP);
-    backRightBearingController.setI(kI);
-    backRightBearingController.setD(kD);
+    backRightBearingController= new PIDController(kP, kI, kD);
     backRightBearingController.enableContinuousInput(0, Math.PI*2);
     backRightBearingController.setSetpoint(Math.PI*7/4);
 
-    robotBearingController.setP(kPRobotTurn);
-    robotBearingController.setI(kIRobotTurn);
-    robotBearingController.setD(kDRobotTurn);
+    robotBearingController= new PIDController(kPRobotTurn, kIRobotTurn, kDRobotTurn);
     robotBearingController.enableContinuousInput(0, Math.PI*2);
     robotBearingController.setSetpoint(angleGoal);
   }
