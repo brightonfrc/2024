@@ -59,24 +59,27 @@ public class Encoders extends SubsystemBase {
     backLeftPosition=0;
     backRightPosition=0;
   }
-  public double getDistanceMoved(int motorNum){
-    switch (motorNum){
-      case 1:
+  public enum MoveEncoder{
+    FRONT_LEFT,FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
+  }
+  public double getDistanceMoved(MoveEncoder encoder){
+    switch (encoder){
+      case FRONT_LEFT:
         //return frontLeft distance
         distanceMoved= frontLeftMove.getPosition()-frontLeftPosition;
         frontLeftPosition=frontLeftMove.getPosition();
         return distanceMoved;
-      case 2:
+      case FRONT_RIGHT:
         //return frontRight distance
         distanceMoved= frontRightMove.getPosition()-frontRightPosition;
         frontRightPosition=frontRightMove.getPosition();
         return distanceMoved;
-      case 3: 
+      case BACK_LEFT: 
         //return backLeft distance
         distanceMoved= backLeftMove.getPosition()-backLeftPosition;
         backLeftPosition=backLeftMove.getPosition();
         return distanceMoved;
-      case 4:    
+      case BACK_RIGHT:    
         //return backRight distance
         distanceMoved= backRightMove.getPosition()-backRightPosition;
         backRightPosition=backRightMove.getPosition();

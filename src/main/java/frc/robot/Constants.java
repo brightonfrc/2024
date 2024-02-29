@@ -31,7 +31,8 @@ public final class Constants {
   }
 
   public static class MotorConstants{
-    public static double movementPerRotation=400;
+    //remember to calculate this
+    public static double movementPerRotation=0.4;
   }
   
   public static class OperatorConstants {
@@ -42,5 +43,8 @@ public final class Constants {
     public static final double kDrivetrainP = 0.2;
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
+    public static final double kRobotMoveP = 0.2;
+    public static final double kRobotMoveI = 0.0;
+    public static final double kRobotMoveD = 0.0;
   }
 }
