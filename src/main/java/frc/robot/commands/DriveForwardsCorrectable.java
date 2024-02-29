@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Encoders;
+import frc.robot.subsystems.Encoders.MoveEncoder;
 
 /** A command that makes the robot drive forwards a certain distance while maintaining a straight path. */
 public class DriveForwardsCorrectable extends Command {
@@ -37,7 +38,7 @@ public class DriveForwardsCorrectable extends Command {
     @Override
     public void initialize() {
         // Record initial encoder distances
-        m_initialLeftDistance = m_encoders.getDistanceMoved(1); // Using front left encoder for example
+        m_initialLeftDistance = m_encoders.getDistanceMoved(MoveEncoder.FRONT_LEFT); // Using front left encoder for example
         //m_initialRightDistance = m_encoders.getDistanceMoved(2); // Using front right encoder for example
     }
 
@@ -45,8 +46,8 @@ public class DriveForwardsCorrectable extends Command {
     @Override
     public void execute() {
         // Get current encoder distances
-        double currentLeftDistance = m_encoders.getDistanceMoved(1); // Using front left encoder for example
-        double currentRightDistance = m_encoders.getDistanceMoved(2); // Using front right encoder for example
+        double currentLeftDistance = m_encoders.getDistanceMoved(MoveEncoder.FRONT_LEFT); // Using front left encoder for example
+        double currentRightDistance = m_encoders.getDistanceMoved(MoveEncoder.FRONT_RIGHT); // Using front right encoder for example
 
         // Calculate error in distances
         double error = currentLeftDistance - currentRightDistance;
@@ -74,8 +75,8 @@ public class DriveForwardsCorrectable extends Command {
     @Override
     public boolean isFinished() {
         // Calculate the average distance traveled
-        double currentLeftDistance = m_encoders.getDistanceMoved(1); // Using front left encoder for example
-        double currentRightDistance = m_encoders.getDistanceMoved(2); // Using front right encoder for example
+        double currentLeftDistance = m_encoders.getDistanceMoved(MoveEncoder.FRONT_LEFT); // Using front left encoder for example
+        double currentRightDistance = m_encoders.getDistanceMoved(MoveEncoder.FRONT_RIGHT); // Using front right encoder for example
         double averageDistance = (currentLeftDistance + currentRightDistance) / 2.0;
 
         // Check if the average distance exceeds the target distance
