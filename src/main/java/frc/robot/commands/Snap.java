@@ -135,6 +135,7 @@ public class Snap extends Command {
     }
     else
     {
+      SmartDashboard.putBoolean("ready to turn",true);
       //robot ready to rotate
       joystickBearing=stick.getDirectionRadians();
       //essentially I won't bother to update this unless the bearing difference is more than 45 degrees

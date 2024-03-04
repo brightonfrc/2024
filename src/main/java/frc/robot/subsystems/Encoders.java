@@ -93,7 +93,6 @@ public class Encoders extends SubsystemBase {
       case FRONT_LEFT:
         //return frontLeft degrees turned
         distanceRotated = frontLeftTurn.getPosition();
-        SmartDashboard.putNumber("FrontLeft Rotations",distanceRotated);
         //using radians
         frontLeftBearing =  distanceRotated*2*Math.PI;
         //if the is more than 2pi, I am resetting it down
@@ -102,7 +101,6 @@ public class Encoders extends SubsystemBase {
       case FRONT_RIGHT:
         //return frontRight degrees turned
         distanceRotated = frontRightTurn.getPosition();
-        SmartDashboard.putNumber("FrontLeft Rotations",distanceRotated);
         //using radians
         frontRightBearing =  distanceRotated*2*Math.PI;
         //if the is more than 2pi, I am resetting it down
@@ -111,7 +109,6 @@ public class Encoders extends SubsystemBase {
       case BACK_LEFT: 
         //return backLeft degrees turned
         distanceRotated = backLeftTurn.getPosition();
-        SmartDashboard.putNumber("FrontLeft Rotations",distanceRotated);
         //using radians
         backLeftBearing =  distanceRotated*2*Math.PI;
         //if the is more than 2pi, I am resetting it down
@@ -120,7 +117,6 @@ public class Encoders extends SubsystemBase {
       case BACK_RIGHT:    
         //return backRight degrees turned
         distanceRotated = backRightTurn.getPosition();
-        SmartDashboard.putNumber("FrontLeft Rotations",distanceRotated);
         //using radians
         backRightBearing =  distanceRotated*2*Math.PI;
         //if the is more than 2pi, I am resetting it down
