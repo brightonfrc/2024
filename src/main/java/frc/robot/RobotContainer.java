@@ -11,6 +11,7 @@ import frc.robot.commands.Snap;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
+import frc.robot.subsystems.DistanceSensor;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.OperatorConstants;
@@ -62,15 +63,17 @@ public class RobotContainer {
 
 
   private final Motors motors= new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
-  //motor radius is configured in mm and distance per rotation is still unkown
+  //distance per rotation is still unknonwn
   private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, MotorConstants.movementPerRotation);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
+  private final DistanceSensor dSensor= new DistanceSensor();
   // remember to set the joystick port
 
   private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
   // this is the button on the handle of the joystick
   private JoystickButton snapButton = new JoystickButton(stick, 1);
-
+  
+  private JoystickButton moveToAmpButton = new JoystickButton(stick, 2);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -90,7 +93,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-  
+    
   }
   private void defaultCommands(){
     SmartDashboard.putBoolean("Set default command", false);

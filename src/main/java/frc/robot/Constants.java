@@ -43,4 +43,12 @@ public final class Constants {
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
   }
+
+  public static class DistanceSensorConstants {
+    public static final int AnalogChannel1=0;
+    public static final int AnalogChannel2=0;
+    //all measurements are in cm
+    public static final double distanceScalar=0.125;
+    public static final double distanceBetweenSensors=50;
+  }
 }
