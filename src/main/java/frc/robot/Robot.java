@@ -3,13 +3,21 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+import frc.robot.subsystems.Motors;
 
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Ports;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,7 +29,22 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private final CANSparkMax frontLeftMove= new CANSparkMax(Ports.kDriveFrontLeftMove,MotorType.kBrushless);
+  private final CANSparkMax frontLeftTurn= new CANSparkMax(Ports.kDriveFrontLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax frontRightMove= new CANSparkMax(Ports.kDriveFrontRightMove,MotorType.kBrushless);
+  private final CANSparkMax frontRightTurn= new CANSparkMax(Ports.kDriveFrontRightTurn,MotorType.kBrushless);
+  private final CANSparkMax backLeftMove= new CANSparkMax(Ports.kDriveBackLeftMove,MotorType.kBrushless);
+  private final CANSparkMax backLeftTurn = new CANSparkMax(Ports.kDriveBackLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax backRightMove= new CANSparkMax(Ports.kDriveBackRightMove,MotorType.kBrushless);
+  private final CANSparkMax backRightTurn= new CANSparkMax(Ports.kDriveBackRightTurn,MotorType.kBrushless);
+  private final AbsoluteEncoder frontLeftMoveEncoder = frontLeftMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder frontRightMoveEncoder = frontRightMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backLeftMoveEncoder = backLeftMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backRightMoveEncoder = backRightMove.getAbsoluteEncoder(Type.kDutyCycle);
 
+  private final Motors motors = new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
+  private PIDController movementController= new PIDController(0.1, 0.0, 0.01);
+  private double currentRotations;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -91,6 +114,13 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+
+    //I will find the distance travelled in 10 rotations, then divide by 10
+    movementController.setSetpoint(10);
+    frontRightMove.follow(frontLeftMove);
+    backLeftMove.follow(frontLeftMove);
+    backRightMove.follow(frontLeftMove);
+    //this is code I will run to deterine distance per rotation
     
   }
 
@@ -98,7 +128,14 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    
+    currentRotations+=frontLeftMoveEncoder.getPosition();
+    currentRotations+=frontRightMoveEncoder.getPosition();
+    currentRotations+=backLeftMoveEncoder.getPosition();
+    currentRotations+=backRightMoveEncoder.getPosition();
+    currentRotations=currentRotations/4;
+    SmartDashboard.putNumber("current Rotations", currentRotations);
+    SmartDashboard.putNumber("PID output", movementController.calculate(currentRotations));
+    frontLeftMove.set(movementController.calculate(currentRotations));
   }
 
   /** This function is called once when the robot is first started up. */
