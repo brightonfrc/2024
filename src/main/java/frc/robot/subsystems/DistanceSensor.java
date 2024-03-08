@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 import frc.robot.Constants.DistanceSensorConstants;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -8,7 +9,11 @@ public class DistanceSensor extends SubsystemBase{
     private double distanceScalar;
     private double distance1;
     private double distance2;
+
     private double distance;
+
+    private double difference;
+
     private AnalogInput distanceSensor1;
     private AnalogInput distanceSensor2;
     public DistanceSensor(){
@@ -17,8 +22,9 @@ public class DistanceSensor extends SubsystemBase{
         voltageScaleFactor=DistanceSensorConstants.distanceScalar;
     }
     public void upddateDistances(double currentVoltage){
-        //current voltage fetched using 
-        //RobotController.getVoltage5V();
+        //every time you want to use any of the methods, this must be called first
+
+        RobotController.getVoltage5V();
         voltageScaleFactor=5/currentVoltage;
         distance1= distanceSensor1.getValue()*voltageScaleFactor*distanceScalar;
         distance2= distanceSensor2.getValue()*voltageScaleFactor*distanceScalar;
@@ -33,7 +39,16 @@ public class DistanceSensor extends SubsystemBase{
             return false;
         }
     }
+    public double getDistance(){
+        distance=distance1+distance2;
+        distance=distance/2;
+        return distance;
+    }
     public double getAngle(){
-        return 0.0;
+        //I'm assuming that distanceSensor1 is the sensor on the right
+        difference=distance1-distance2;
+        //funny thing is that theoretically, the bearing relative to the wall must be within -90 and 90.
+        //so I only need to use atan instead of atan2
+        return Math.atan(difference/DistanceSensorConstants.distanceBetweenSensors);
     }
 }
