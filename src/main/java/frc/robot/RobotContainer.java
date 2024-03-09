@@ -5,12 +5,30 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+// here is where you put all your commands and subsystems;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.Drive;
+import frc.robot.commands.Snap;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Encoders;
+import frc.robot.subsystems.Motors;
+import frc.robot.Constants.Ports;
+import frc.robot.Constants.MotorConstants;
+import frc.robot.Constants.OperatorConstants;
+import frc.robot.subsystems.Gyroscope;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.I2C;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,15 +39,46 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  // the video says to define the motors within the motors subsystem, but I will just define it here so I know where all my 
+  // variables are
+  
+  // remember to configure the acutal channels
+  private final CANSparkMax frontLeftMove= new CANSparkMax(Ports.kDriveFrontLeftMove,MotorType.kBrushless);
+  private final CANSparkMax frontLeftTurn= new CANSparkMax(Ports.kDriveFrontLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax frontRightMove= new CANSparkMax(Ports.kDriveFrontRightMove,MotorType.kBrushless);
+  private final CANSparkMax frontRightTurn= new CANSparkMax(Ports.kDriveFrontRightTurn,MotorType.kBrushless);
+  private final CANSparkMax backLeftMove= new CANSparkMax(Ports.kDriveBackLeftMove,MotorType.kBrushless);
+  private final CANSparkMax backLeftTurn = new CANSparkMax(Ports.kDriveBackLeftTurn,MotorType.kBrushless);
+  private final CANSparkMax backRightMove= new CANSparkMax(Ports.kDriveBackRightMove,MotorType.kBrushless);
+  private final CANSparkMax backRightTurn= new CANSparkMax(Ports.kDriveBackRightTurn,MotorType.kBrushless);
+  private final AbsoluteEncoder frontLeftMoveEncoder = frontLeftMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder frontLeftTurnEncoder = frontLeftTurn.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder frontRightMoveEncoder = frontRightMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder frontRightTurnEncoder = frontRightTurn.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backLeftMoveEncoder = backLeftMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backLeftTurnEncoder = backLeftTurn.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backRightMoveEncoder = backRightMove.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AbsoluteEncoder backRightTurnEncoder = backRightTurn.getAbsoluteEncoder(Type.kDutyCycle);
+  private final AHRS gyro = new AHRS(I2C.Port.kMXP);
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+
+  private final Motors motors= new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
+  //motor radius is configured in mm and distance per rotation is still unkown
+  private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, MotorConstants.movementPerRotation);
+  private final Gyroscope gyroscope = new Gyroscope(gyro);
+  // remember to set the joystick port
+
+  private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
+  // this is the button on the handle of the joystick
+  private JoystickButton snapButton = new JoystickButton(stick, OperatorConstants.snapButtonNum);
+
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    defaultCommands();
   }
 
   /**
@@ -42,15 +91,14 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+    snapButton.whileTrue(new Snap(motors, encoders, gyroscope, stick));
+  
   }
-
+  private void defaultCommands(){
+    motors.setDefaultCommand(new Drive(motors,encoders,gyroscope,stick));
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
