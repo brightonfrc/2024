@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DistanceSensor extends SubsystemBase{
     private double voltageScaleFactor;
     private double distanceScalar;
+    private double currentVoltage;
     private double distance1;
     private double distance2;
 
@@ -21,14 +22,13 @@ public class DistanceSensor extends SubsystemBase{
         distanceSensor2= new AnalogInput(DistanceSensorConstants.AnalogChannel2);
         voltageScaleFactor=DistanceSensorConstants.distanceScalar;
     }
-    public void upddateDistances(double currentVoltage){
+    public void upddateDistances(){
         //every time you want to use any of the methods, this must be called first
-
-        RobotController.getVoltage5V();
+        currentVoltage=RobotController.getVoltage5V();
         voltageScaleFactor=5/currentVoltage;
         distance1= distanceSensor1.getValue()*voltageScaleFactor*distanceScalar;
         distance2= distanceSensor2.getValue()*voltageScaleFactor*distanceScalar;
-        //do note that if the distance is less than 0.3m or more than 5m, it is represented within 0.3m and 5m
+        //do note that if the distance is less than 30cm or more than 500cm, it is represented within 30cm and 500cm
     }
     public boolean checkAligned(){
         //allowing 1cm of difference

@@ -8,6 +8,8 @@ package frc.robot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
+import frc.robot.commands.AlignWithAmp;
+import frc.robot.commands.MoveToAmp;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
@@ -20,6 +22,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -72,8 +75,9 @@ public class RobotContainer {
   private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
   // this is the button on the handle of the joystick
   private JoystickButton snapButton = new JoystickButton(stick, 1);
-  
+
   private JoystickButton moveToAmpButton = new JoystickButton(stick, 2);
+  private SequentialCommandGroup moveToAmp = new SequentialCommandGroup(new AlignWithAmp(encoders,motors,dSensor), new MoveToAmp(motors,dSensor));
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -93,7 +97,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
+    moveToAmpButton.whileTrue(moveToAmp);
   }
   private void defaultCommands(){
     SmartDashboard.putBoolean("Set default command", false);

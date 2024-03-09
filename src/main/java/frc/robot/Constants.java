@@ -42,6 +42,12 @@ public final class Constants {
     public static final double kDrivetrainP = 0.2;
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
+    public static final double kPRobotTurn = 0.2;
+    public static final double kIRobotTurn = 0.0;
+    public static final double kDRobotTurn = 0.0;
+    public static final double kPRobotMove = 0.2;
+    public static final double kIRobotMove = 0.0;
+    public static final double kDRobotMove = 0.0;
   }
 
   public static class DistanceSensorConstants {
