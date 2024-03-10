@@ -4,7 +4,17 @@
 
 package frc.robot;
 
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.motorcontrol.Victor;
+import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -18,6 +28,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+  private CANSparkMax leftDriveMotor;
+  private CANSparkMax rightDriveMotor;
+  private AbsoluteEncoder leftDriveEncoder;
+  private AbsoluteEncoder rightDriveEncoder;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -28,6 +42,13 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    // PWM Port Number / Encoder Channel Numbers in the brackets after the new ... constructor
+    leftDriveMotor = new CANSparkMax(0, MotorType.kBrushless);
+    rightDriveMotor = new CANSparkMax(1, MotorType.kBrushless);
+
+    leftDriveEncoder = leftDriveMotor.getAbsoluteEncoder();
+    rightDriveEncoder = rightDriveMotor.getAbsoluteEncoder();
   }
 
   /**
@@ -44,6 +65,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -66,7 +88,29 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    if(!RobotBase.isReal()) {
+      // Simulation only - Autodesk Synthesis Compatibility
+
+      // Simulated PWM Motor Controllers 
+      SimulationHardware.getInstance().leftDriveMotor.set(1.0);
+      SimulationHardware.getInstance().rightDriveMotor.set(1.0);
+
+      // Simulated Encoders 
+      SmartDashboard.putNumber("Left Encoder Distance", SimulationHardware.getInstance().leftDriveEncoder.getDistance());
+      SmartDashboard.putNumber("Right Encoder Distance", SimulationHardware.getInstance().rightDriveEncoder.getDistance());
+    } else {
+      // Real robot - Real Hardware (Here, REV 'CANSparkMax's and their associated 'AbsoluteEncoder's)
+      
+      // CAN Motor Controllers
+      leftDriveMotor.set(1.0);
+      rightDriveMotor.set(1.0);
+      
+      // Motor Controllers' Integrated Encoders
+      SmartDashboard.putNumber("Left Encoder Distance", leftDriveEncoder.getPosition());
+      SmartDashboard.putNumber("Right Encoder Distance", rightDriveEncoder.getPosition());
+    }
+  }
 
   @Override
   public void teleopInit() {
