@@ -41,12 +41,15 @@ public final class Constants {
   }
 
   public static class PIDConstants {
-    public static final double kDrivetrainP = 0.25;
+    public static final double kDrivetrainP = 0.1;
     public static final double kDrivetrainI = 0.0;
     public static final double kDrivetrainD = 0.0;
-    public static final double kRobotTurningP=0.01;
+    public static final double kRobotTurningP=0.025;
     public static final double kRobotTurningI=0.0;
     public static final double kRobotTurningD=0.0;
+    public static final double snapMotorP = 0.2;
+    public static final double snapMotorI = 0.1;
+    public static final double snapMotorD = 0.0;
   }
   public static class SnapConstants{
     public static final double snapAngleTolerance=2.5;

@@ -63,9 +63,9 @@ public class Snap extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    kP=PIDConstants.kDrivetrainP;
-    kI=PIDConstants.kDrivetrainI;
-    kD=PIDConstants.kDrivetrainD;
+    kP=PIDConstants.snapMotorP;
+    kI=PIDConstants.snapMotorI;
+    kD=PIDConstants.snapMotorD;
 
     kPRobot=PIDConstants.kRobotTurningP;
     kIRobot=PIDConstants.kRobotTurningI;
@@ -120,16 +120,20 @@ public class Snap extends Command {
       bearingControllerBackLeft.atSetpoint()==false ||
       bearingControllerBackRight.atSetpoint()==false){
       currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
+      SmartDashboard.putNumber("FL Bearing", currentBearing);
       motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
     
       currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
+      SmartDashboard.putNumber("FR Bearing", currentBearing);
       motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
       
       currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
+      SmartDashboard.putNumber("BL Bearing", currentBearing);
       motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
       
       
       currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
+      SmartDashboard.putNumber("BR Bearing", currentBearing);
       motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing), TurnMotor.BACK_RIGHT);
 
       SmartDashboard.putBoolean("FL ready",bearingControllerFrontLeft.atSetpoint());
@@ -139,16 +143,22 @@ public class Snap extends Command {
     }
     else
     {
-      SmartDashboard.putNumber("previousSnapGoal", previousSnapGoal);
       joystickBearing=stick.getDirectionRadians();
+      SmartDashboard.putNumber("JoystickBearing", joystickBearing);
       //converting the joystickBearing to range 0 to 2pi
-      joystickBearing+=Math.PI;
+      if(joystickBearing<0){
+        joystickBearing+=2*Math.PI;
+      }
       //essentially I won't bother to update this unless the bearing difference is more than 45 degrees
       if (Math.abs(joystickBearing-previousSnapGoal)>Math.PI/4){  
         // coding the data from 1 to 4
         joystickBearing= joystickBearing/Math.PI*2;
         // rounding to closest integer
         int estimate= (int) Math.round(joystickBearing);
+        if (estimate==4){
+          //the PIDController doesn't appreciate snapping between 0 and 4, which are essentially the same thing
+          estimate=0;
+        }
         joystickBearing=estimate;
         //adding this because I got a funny feeling about the fact that it is rounded to a long
         SmartDashboard.putNumber("approximation", estimate);
@@ -160,12 +170,15 @@ public class Snap extends Command {
         previousSnapGoal=snapGoal;
       }
       SmartDashboard.putNumber("current Bearing", gyro.getBearing());
-      motors.setMoveMotors(robotBearingController.calculate(gyro.getBearing()));
+      SmartDashboard.putNumber("PID setpoint", robotBearingController.getSetpoint());
+      SmartDashboard.putNumber("PID output", robotBearingController.calculate(gyro.getBearing()));
+      motors.setMoveMotors(robotBearingController.calculate(gyro.getBearing())*0.5);
     }
   }
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("Command active", false);
     motors.setTurnMotors(0, TurnMotor.FRONT_LEFT);
     motors.setTurnMotors(0,TurnMotor.FRONT_RIGHT);
     motors.setTurnMotors(0, TurnMotor.BACK_LEFT);
