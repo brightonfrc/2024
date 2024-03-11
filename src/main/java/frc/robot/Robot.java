@@ -7,8 +7,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,11 +25,9 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  private Talon FrontLeftMove;
-  private Talon FrontRightMove;
-  private Talon BackLeftMove;
-  private Talon BackRightMove;
-  private Encoder frontLeftMove;
+  private CANSparkMax motor;
+  private long startTime;
+  private long currentTime;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -88,32 +91,26 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    
+  }
 
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    FrontLeftMove= new Talon(0);
-    FrontRightMove= new Talon(0);
-    BackLeftMove= new Talon(0);
-    BackRightMove= new Talon(0);
-    frontLeftMove = new Encoder(0, 0);
-    FrontLeftMove.set(0.1);
-    FrontRightMove.set(0.1);
-    BackLeftMove.set(0.1);
-    BackRightMove.set(0.1);
+    motor = new CANSparkMax(10, MotorType.kBrushless);
+    startTime=System.currentTimeMillis();
   }
 
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    if (frontLeftMove.get()==100){
-      FrontLeftMove.set(0);
-      FrontRightMove.set(0);
-      BackLeftMove.set(0);
-      BackRightMove.set(0);
+    currentTime=System.currentTimeMillis()-startTime;
+    if (currentTime<2000){
+      SmartDashboard.putBoolean("running", true);
+      motor.set(0.1);
     }
   }
 

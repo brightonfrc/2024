@@ -76,25 +76,25 @@ public class Snap extends Command {
     bearingControllerFrontLeft.enableContinuousInput(0, 2*Math.PI);
     //setting tolerance to +=2.5 degree (radians equivalent)
     bearingControllerFrontLeft.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
-    bearingControllerFrontLeft.setSetpoint(Math.PI*7/4);
+    bearingControllerFrontLeft.setSetpoint(Math.PI*3/4);
 
     bearingControllerFrontRight=new PIDController(kP, kI, kD);
     bearingControllerFrontRight.enableContinuousInput(0, 2*Math.PI);
     //setting tolerance to +=2.5 degree (radians equivalent)
     bearingControllerFrontRight.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
-    bearingControllerFrontRight.setSetpoint(Math.PI*5/4);
+    bearingControllerFrontRight.setSetpoint(Math.PI*1/4);
 
     bearingControllerBackLeft=new PIDController(kP, kI, kD);
     bearingControllerBackLeft.enableContinuousInput(0, 2*Math.PI);
     //setting tolerance to +=2.5 degree (radians equivalent)
     bearingControllerBackLeft.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
-    bearingControllerBackLeft.setSetpoint(Math.PI*1/4);
+    bearingControllerBackLeft.setSetpoint(Math.PI*5/4);
 
     bearingControllerBackRight=new PIDController(kP, kI, kD);
     bearingControllerBackRight.enableContinuousInput(0, 2*Math.PI);
     //setting tolerance to +=2.5 degree (radians equivalent)
     bearingControllerBackRight.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
-    bearingControllerBackRight.setSetpoint(Math.PI*7/4);
+    bearingControllerBackRight.setSetpoint(Math.PI*3/4);
 
     //the PID controller for the robot itself after turning mode has been achieved
     robotBearingController= new PIDController(kPRobot, kIRobot, kDRobot);
@@ -113,36 +113,35 @@ public class Snap extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
+    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
+    SmartDashboard.putNumber("FL Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
+    
+    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
+    SmartDashboard.putNumber("FR Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
+      
+    currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
+    SmartDashboard.putNumber("BL Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
+      
+      
+    currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
+    SmartDashboard.putNumber("BR Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing), TurnMotor.BACK_RIGHT);
+
+    SmartDashboard.putBoolean("FL ready",bearingControllerFrontLeft.atSetpoint());
+    SmartDashboard.putBoolean("FR ready", bearingControllerFrontRight.atSetpoint());
+    SmartDashboard.putBoolean("BL ready", bearingControllerBackLeft.atSetpoint());
+    SmartDashboard.putBoolean("BR ready", bearingControllerBackRight.atSetpoint());
+    
     //if any of the motors are not ready to turn, this code won't run
     if (
-      bearingControllerFrontLeft.atSetpoint()==false ||
-      bearingControllerFrontRight.atSetpoint()==false ||
-      bearingControllerBackLeft.atSetpoint()==false ||
-      bearingControllerBackRight.atSetpoint()==false){
-      currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
-      SmartDashboard.putNumber("FL Bearing", currentBearing);
-      motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
-    
-      currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
-      SmartDashboard.putNumber("FR Bearing", currentBearing);
-      motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
-      
-      currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
-      SmartDashboard.putNumber("BL Bearing", currentBearing);
-      motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
-      
-      
-      currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
-      SmartDashboard.putNumber("BR Bearing", currentBearing);
-      motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing), TurnMotor.BACK_RIGHT);
-
-      SmartDashboard.putBoolean("FL ready",bearingControllerFrontLeft.atSetpoint());
-      SmartDashboard.putBoolean("FR ready", bearingControllerFrontRight.atSetpoint());
-      SmartDashboard.putBoolean("BL ready", bearingControllerBackLeft.atSetpoint());
-      SmartDashboard.putBoolean("BR ready", bearingControllerBackRight.atSetpoint());
-    }
-    else
-    {
+      bearingControllerFrontLeft.atSetpoint() ||
+      bearingControllerFrontRight.atSetpoint() ||
+      bearingControllerBackLeft.atSetpoint() ||
+      bearingControllerBackRight.atSetpoint()){
       joystickBearing=stick.getDirectionRadians();
       SmartDashboard.putNumber("JoystickBearing", joystickBearing);
       //converting the joystickBearing to range 0 to 2pi
