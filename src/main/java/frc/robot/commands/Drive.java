@@ -104,10 +104,15 @@ public class Drive extends Command {
   public void execute() {
     SmartDashboard.putNumber("joystick Magnitude", joystick.getMagnitude());
     //Adding Pi to the joystick output so that it is within the range 0 to 2 pi
-    joystickBearing=joystick.getDirectionRadians()+Math.PI;
+    joystickBearing=joystick.getDirectionRadians();
+    if (joystickBearing<0){
+      //converting joystick bearing from range 0 to 2pi
+      joystickBearing+=Math.PI*2;
+    }
     fieldOrientOffset=gyro.getBearing();
     joystickBearing-=fieldOrientOffset;
     if (joystickBearing<0){
+      //converting the updated joystick bearing from range 0 to 2pi
       joystickBearing+=Math.PI*2;
     }
     SmartDashboard.putNumber("joystick/bearing",joystickBearing);
@@ -123,7 +128,16 @@ public class Drive extends Command {
       bearingControllerFrontRight.reset();
       bearingControllerBackLeft.setSetpoint(previousBearingGoal);
       bearingControllerBackLeft.reset();
-      bearingControllerBackRight.setSetpoint(previousBearingGoal);
+      //due to the tendency for the backright motor to be inversed, I will always set the bearing goal to be 
+      //the current bearing + 180 degrees.
+      if (previousBearingGoal<Math.PI)
+      {
+        bearingControllerBackRight.setSetpoint(previousBearingGoal+Math.PI);
+      }
+      else{
+        //making sure the setpoint is never more than 2 pi radians
+        bearingControllerBackRight.setSetpoint(previousBearingGoal-Math.PI);
+      }
       bearingControllerBackRight.reset();
     }
     currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
