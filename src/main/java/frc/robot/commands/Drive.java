@@ -44,9 +44,12 @@ public class Drive extends Command {
 
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new DriveCommand.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param motors The motors subsystem used by this command.
+   * @param encoders The encoders subsystem used by this command. 
+   * @param gyro The gyroscope subsystem used by this command
+   * @param stick The Joystick used by the driver
    */
   public Drive(Motors motors, Encoders encoders, Gyroscope gyro, Joystick stick) {
     this.encoders=encoders;
@@ -98,6 +101,7 @@ public class Drive extends Command {
     motors.setTurnMotors(0,TurnMotor.BACK_LEFT);
     motors.setTurnMotors(0,TurnMotor.BACK_RIGHT);
   }
+
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

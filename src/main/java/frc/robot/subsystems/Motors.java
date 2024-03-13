@@ -17,7 +17,18 @@ public class Motors extends SubsystemBase {
   public static CANSparkMax backRightMove;
   public static CANSparkMax backRightTurn;
   
-
+  /**
+   * This creates the Motors subsystem to manage what power the motors are set at. 
+   * This only works for a swerve drive.
+   * @param FrontLeftMove the Front Left Movement Motor
+   * @param FrontLeftTurn the Front Left Turning Motor
+   * @param FrontRightMove the Front Right Movement Motor
+   * @param FrontRightTurn the Front Right Turning Motor
+   * @param BackLeftMove the Back Left Movement Motor
+   * @param BackLeftTurn the Back Left Turning Motor
+   * @param BackRightMove the Back Right Movement Motor
+   * @param BackRightTurn the Back Right Turning Motor
+   */
   public Motors(CANSparkMax FrontLeftMove, CANSparkMax FrontLeftTurn, CANSparkMax FrontRightMove, CANSparkMax FrontRightTurn, CANSparkMax BackLeftMove, CANSparkMax BackLeftTurn, CANSparkMax BackRightMove, CANSparkMax BackRightTurn) {
     frontLeftMove=FrontLeftMove;
     frontLeftTurn=FrontLeftTurn;
@@ -32,6 +43,11 @@ public class Motors extends SubsystemBase {
     frontRightMove.follow(FrontLeftMove);
     backLeftMove.follow(FrontLeftMove);
   }
+  /**
+   * This sets the move motors to go at a certain power
+   * @param PIDoutput The power that you want to set the motors at, ideally controller by a 
+   * PID controller. Only takes from range -1 to 1. 
+   */
   public void setMoveMotors(double PIDoutput){
     frontLeftMove.set(PIDoutput);
     //backRightMotor is inverted
@@ -41,7 +57,12 @@ public class Motors extends SubsystemBase {
   public enum TurnMotor {
     FRONT_LEFT, FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
   }
-
+  /**
+   * This sets the turn motors to go at a certain power
+   * @param PIDOutput The power that you want to set the motors at, ideally controller by a 
+   * PID controller. Only takes from range -1 to 1. 
+   * @param motor The Turn motor which you would like to set. 
+   */
   public void setTurnMotors(double PIDOutput, TurnMotor motor){
     switch (motor)
     {  

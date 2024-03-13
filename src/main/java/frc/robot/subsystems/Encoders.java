@@ -30,7 +30,21 @@ public class Encoders extends SubsystemBase {
   public double frontRightBearing;
   public double backLeftBearing;
   public double backRightBearing;
-  
+  /**
+   * Creates an encoder subsystem to manage the encoders of the robot
+   * This only works for swerve drives. If you use a different set of encoders for the swerve drive
+   * you only need to modify the class of the encoder parameters
+   * 
+   * @param frontLeftMove the encoder of the Front Left Movement Encoder
+   * @param frontLeftTurn the encoder of the Front Left Turning Encoder
+   * @param frontRightTurn the encoder of the Front Right Turning Encoder
+   * @param frontRightMove the encoder of the Front Right Movement Encoder
+   * @param backLeftMove the encoder of the Back Left Movement Encoder
+   * @param backLeftTurn the encoder of the Back Left Turning Encoder
+   * @param backRightMove the encoder of he Back Right Movement Encoder
+   * @param backRightTurn the encoder of the Back Right Turning Encoder
+   * @param movementPerRotation the distance that the robot moves for every rotation of the Movement Encoder
+   */
   public Encoders(AbsoluteEncoder frontLeftMove, AbsoluteEncoder frontLeftTurn, AbsoluteEncoder frontRightTurn, AbsoluteEncoder frontRightMove, AbsoluteEncoder backLeftMove, AbsoluteEncoder backLeftTurn, AbsoluteEncoder backRightMove, AbsoluteEncoder backRightTurn, double movementPerRotation) {
     this.frontLeftMove = frontLeftMove;
     this.frontLeftTurn = frontLeftTurn;
@@ -59,6 +73,11 @@ public class Encoders extends SubsystemBase {
     backLeftPosition=0;
     backRightPosition=0;
   }
+  /**
+   * This gets the distanceMoved by each  since the last time this function was called
+   * @param motorNum the number of the motor you want to check
+   * @return the distance Moved since the last time this function was called
+   */
   public double getDistanceMoved(int motorNum){
     switch (motorNum){
       case 1:
@@ -88,6 +107,12 @@ public class Encoders extends SubsystemBase {
   public enum TurnEncoder{
     FRONT_LEFT,FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
   }
+  /**
+   * This returns the currrent bearing of any one of the Turn Encoders in radians
+   * The range is from 0 to 2 PI radians
+   * @param encoder the TurnEncoder you would like to check
+   * @return the bearing of the encoder from 0 to 2PI Radians
+   */
   public double motorTurned(TurnEncoder encoder){
     switch (encoder){
       case FRONT_LEFT:
