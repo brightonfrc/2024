@@ -4,9 +4,23 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -60,20 +74,47 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {}
 
+  // TODO: Move to command
+  // https://docs.photonvision.org/en/latest/docs/programming/photonlib/robot-pose-estimator.html
+  // The field from AprilTagFields will be different depending on the game.
+  PhotonCamera cam;
+  PhotonPoseEstimator photonPoseEstimator;
+
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    // // schedule the autonomous command (example)
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
+    // TODO: Move to command
+    AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    //Forward Camera
+    cam = new PhotonCamera("Camera_Module_v3");
+    Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
+
+    // Construct PhotonPoseEstimator
+    photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, cam, robotToCam);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    // TODO: Move to command
+    Optional<EstimatedRobotPose> pose = photonPoseEstimator.update();
+    SmartDashboard.putBoolean("Pose/Empty", pose.isEmpty());
+    SmartDashboard.putString("Pose/Result", cam.getLatestResult().toString());
+    if(pose.isPresent()) {
+      SmartDashboard.putNumber("Pose/X", pose.get().estimatedPose.getX());
+      SmartDashboard.putNumber("Pose/Y", pose.get().estimatedPose.getY());
+      SmartDashboard.putNumber("Pose/Z", pose.get().estimatedPose.getZ());
+      SmartDashboard.putString("Pose/Status", "Detected");
+    } else {
+      SmartDashboard.putString("Pose/Status", "Undetected");
+    }
+  }
 
   @Override
   public void teleopInit() {

@@ -4,18 +4,17 @@
 
 package frc.robot;
 
-import frc.robot.commands.AlignWithAprilTag;
 // here is where you put all your commands and subsystems;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
-import frc.robot.commands.AlignWithAprilTag;
-import frc.robot.commands.MoveToAmp;
+// import frc.robot.commands.AlignWithAprilTag;
+// import frc.robot.commands.MoveToAmp;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Gyroscope;
-import frc.robot.subsystems.TagDetector;
+// import frc.robot.subsystems.TagDetector;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.Constants.MotorConstants;
@@ -74,7 +73,7 @@ public class RobotContainer {
   //motor radius is configured in mm and distance per rotation is still unkown
   private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, MotorConstants.movementPerRotation);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
-  private final TagDetector tagDetector= new TagDetector(detector, configuration);
+  // private final TagDetector tagDetector= new TagDetector(detector, configuration);
   
   // remember to set the joystick port
 
@@ -84,7 +83,7 @@ public class RobotContainer {
   private JoystickButton ampShotButton= new JoystickButton(stick, OperatorConstants.AmpShotButton);
 
   //remember to add the actual shoot into amp command in here. 
-  private final SequentialCommandGroup autoAmpShot= new SequentialCommandGroup(new AlignWithAprilTag(encoders, motors, tagDetector), new MoveToAmp(encoders, motors, tagDetector));
+  private final SequentialCommandGroup autoAmpShot= new SequentialCommandGroup(); //new SequentialCommandGroup(new AlignWithAprilTag(encoders, motors, tagDetector), new MoveToAmp(encoders, motors, tagDetector));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
