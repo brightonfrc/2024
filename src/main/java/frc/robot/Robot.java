@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-//import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-//import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.VictorSPXControlMode;
 
 
 /**
@@ -26,8 +26,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  // private VictorSPX leftMotor;
-  // private VictorSPX rightMotor;
+  private VictorSPX leftMotor;
+  private VictorSPX rightMotor;
   
 
 
@@ -99,14 +99,16 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
-    // leftMotor= new VictorSPX
+    leftMotor= new VictorSPX(0);
+    rightMotor = new VictorSPX(1);
   }
 
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    
+    leftMotor.set(VictorSPXControlMode.PercentOutput, 0.3);
+    rightMotor.set(VictorSPXControlMode.PercentOutput, 0.3);
   }
 
   /** This function is called once when the robot is first started up. */
