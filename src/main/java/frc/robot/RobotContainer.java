@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.Constants.OperatorConstants;
 // here is where you put all your commands and subsystems;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -69,7 +71,7 @@ public class RobotContainer {
 
   private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
   // this is the button on the handle of the joystick
-  private JoystickButton snapButton = new JoystickButton(stick, 1);
+  private JoystickButton snapButton = new JoystickButton(stick, OperatorConstants.snapButtonNum);
 
 
 

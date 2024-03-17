@@ -30,6 +30,7 @@ public class Encoders extends SubsystemBase {
   public double frontRightBearing;
   public double backLeftBearing;
   public double backRightBearing;
+  
   /**
    * Creates an encoder subsystem to manage the encoders of the robot
    * This only works for swerve drives. If you use a different set of encoders for the swerve drive
@@ -55,9 +56,6 @@ public class Encoders extends SubsystemBase {
     this.backRightMove = backRightMove;
     this.backRightTurn = backRightTurn;
 
-
- 
-
     //the movement motors use movement per rotation because 1 rotation for the moveement motor doesn't mean that 
     //the robot moves forward by precisely the circumference of the motor
     frontLeftMove.setPositionConversionFactor(movementPerRotation);
@@ -73,6 +71,7 @@ public class Encoders extends SubsystemBase {
     backLeftPosition=0;
     backRightPosition=0;
   }
+  
   /**
    * This gets the distanceMoved by each  since the last time this function was called
    * @param motorNum the number of the motor you want to check
@@ -104,9 +103,11 @@ public class Encoders extends SubsystemBase {
     //this should never happen, but just in case
     return 0.0;
   }
+  
   public enum TurnEncoder{
     FRONT_LEFT,FRONT_RIGHT, BACK_LEFT, BACK_RIGHT
   }
+  
   /**
    * This returns the currrent bearing of any one of the Turn Encoders in radians
    * The range is from 0 to 2 PI radians
@@ -156,6 +157,3 @@ public class Encoders extends SubsystemBase {
     return 0.0;
   }
 }
-
-
-

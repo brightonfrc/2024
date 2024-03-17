@@ -5,12 +5,17 @@ import frc.robot.subsystems.Encoders.TurnEncoder;
 import frc.robot.subsystems.Motors;
 import frc.robot.subsystems.Motors.TurnMotor;
 import frc.robot.subsystems.Gyroscope;
+import frc.robot.Constants.PIDConstants;
+import frc.robot.Constants.SnapConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import java.lang.Math;
 
 /** An example command that uses an example subsystem. */
 public class Snap extends Command {
@@ -27,9 +32,6 @@ public class Snap extends Command {
   private PIDController robotBearingController;
 
   public ShuffleboardTab tab;
-  public GenericEntry P;
-  public GenericEntry I;
-  public GenericEntry D;
   //for the motors
   public double kP;
   public double kI;
@@ -61,100 +63,121 @@ public class Snap extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    tab= Shuffleboard.getTab("kPMotor");
-    P=tab.add("Motor P constant",0).getEntry();
-    kP=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIMotor");
-    I=tab.add("Motor I constant",0).getEntry();
-    kI=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDMotor");
-    D=tab.add("Motor D constant",0).getEntry();
-    kD=D.getDouble(0);
+    kP=PIDConstants.snapMotorP;
+    kI=PIDConstants.snapMotorI;
+    kD=PIDConstants.snapMotorD;
 
-    tab= Shuffleboard.getTab("kPRobot");
-    P=tab.add("Robot P constant",0).getEntry();
-    kPRobot=P.getDouble(0);
-    tab= Shuffleboard.getTab("kIRobot");
-    I=tab.add("Robot I constant",0).getEntry();
-    kIRobot=I.getDouble(0);
-    tab= Shuffleboard.getTab("kDRobot");
-    D=tab.add("Robot D constant",0).getEntry();
-    kDRobot=D.getDouble(0);
-
+    kPRobot=PIDConstants.kRobotTurningP;
+    kIRobot=PIDConstants.kRobotTurningI;
+    kDRobot=PIDConstants.kRobotTurningD;
+    
     // first the turn motors need to get ready for turning
     bearingControllerFrontLeft=new PIDController(kP, kI, kD);
     bearingControllerFrontLeft.enableContinuousInput(0, 2*Math.PI);
-    //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerFrontLeft.setTolerance(Math.PI/360);
-    bearingControllerFrontLeft.setSetpoint(Math.PI/4);
+    //setting tolerance to +=2.5 degree (radians equivalent)
+    bearingControllerFrontLeft.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
+    bearingControllerFrontLeft.setSetpoint(Math.PI*3/4);
 
     bearingControllerFrontRight=new PIDController(kP, kI, kD);
     bearingControllerFrontRight.enableContinuousInput(0, 2*Math.PI);
-    //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerFrontRight.setTolerance(Math.PI/360);
-    bearingControllerFrontRight.setSetpoint(Math.PI*3/4);
+    //setting tolerance to +=2.5 degree (radians equivalent)
+    bearingControllerFrontRight.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
+    bearingControllerFrontRight.setSetpoint(Math.PI*1/4);
 
     bearingControllerBackLeft=new PIDController(kP, kI, kD);
     bearingControllerBackLeft.enableContinuousInput(0, 2*Math.PI);
-    //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerBackLeft.setTolerance(Math.PI/360);
+    //setting tolerance to +=2.5 degree (radians equivalent)
+    bearingControllerBackLeft.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
     bearingControllerBackLeft.setSetpoint(Math.PI*5/4);
 
     bearingControllerBackRight=new PIDController(kP, kI, kD);
     bearingControllerBackRight.enableContinuousInput(0, 2*Math.PI);
-    //setting tolerance to +=1 degree (radians equivalent)
-    bearingControllerBackRight.setTolerance(Math.PI/360);
-    bearingControllerBackRight.setSetpoint(Math.PI*7/4);
+    //setting tolerance to +=2.5 degree (radians equivalent)
+    bearingControllerBackRight.setTolerance(Math.PI/180*SnapConstants.snapAngleTolerance);
+    bearingControllerBackRight.setSetpoint(Math.PI*3/4);
 
     //the PID controller for the robot itself after turning mode has been achieved
     robotBearingController= new PIDController(kPRobot, kIRobot, kDRobot);
     robotBearingController.enableContinuousInput(0, 2*Math.PI);
-    robotBearingController.setTolerance(Math.PI/360);
+    robotBearingController.setTolerance(Math.PI/180*SnapConstants.snapBearingTolerance);
+
+    //setting all the motors to zero
+    motors.setTurnMotors(0, TurnMotor.FRONT_LEFT);
+    motors.setTurnMotors(0, TurnMotor.FRONT_RIGHT);
+    motors.setTurnMotors(0, TurnMotor.BACK_LEFT);
+    motors.setTurnMotors(0, TurnMotor.BACK_RIGHT);
+    motors.setMoveMotors(0);
+    SmartDashboard.putBoolean("Command active", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
+    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
+    SmartDashboard.putNumber("FL Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
+    
+    currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
+    SmartDashboard.putNumber("FR Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
+      
+    currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
+    SmartDashboard.putNumber("BL Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
+      
+      
+    currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
+    SmartDashboard.putNumber("BR Bearing", currentBearing);
+    motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing), TurnMotor.BACK_RIGHT);
+
+    SmartDashboard.putBoolean("FL ready",bearingControllerFrontLeft.atSetpoint());
+    SmartDashboard.putBoolean("FR ready", bearingControllerFrontRight.atSetpoint());
+    SmartDashboard.putBoolean("BL ready", bearingControllerBackLeft.atSetpoint());
+    SmartDashboard.putBoolean("BR ready", bearingControllerBackRight.atSetpoint());
+    
     //if any of the motors are not ready to turn, this code won't run
     if (
-      bearingControllerFrontLeft.atSetpoint()==false ||
-      bearingControllerFrontRight.atSetpoint()==false ||
-      bearingControllerBackLeft.atSetpoint()==false ||
-      bearingControllerBackRight.atSetpoint()==false){
-      currentBearing=encoders.motorTurned(TurnEncoder.FRONT_LEFT);
-      motors.setTurnMotors(bearingControllerFrontLeft.calculate(currentBearing), TurnMotor.FRONT_LEFT);
-    
-      currentBearing=encoders.motorTurned(TurnEncoder.FRONT_RIGHT);
-      motors.setTurnMotors(bearingControllerFrontRight.calculate(currentBearing), TurnMotor.FRONT_RIGHT);
-
-      currentBearing=encoders.motorTurned(TurnEncoder.BACK_LEFT);
-      motors.setTurnMotors(bearingControllerBackLeft.calculate(currentBearing), TurnMotor.BACK_LEFT);
-      
-      currentBearing=encoders.motorTurned(TurnEncoder.BACK_RIGHT);
-      motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing), TurnMotor.BACK_RIGHT);
-    }
-    else{
-      //robot ready to rotate
+      bearingControllerFrontLeft.atSetpoint() ||
+      bearingControllerFrontRight.atSetpoint() ||
+      bearingControllerBackLeft.atSetpoint() ||
+      bearingControllerBackRight.atSetpoint()){
       joystickBearing=stick.getDirectionRadians();
-      // coding the data from 1 to 4
-      joystickBearing= joystickBearing/Math.PI*2;
-      // rounding to closest integer
-      int estimate=(int) joystickBearing;
-      joystickBearing=estimate;
-      //converting back to radians
-      snapGoal=joystickBearing*Math.PI/2;
-      if (snapGoal!=previousSnapGoal){
+      SmartDashboard.putNumber("JoystickBearing", joystickBearing);
+      //converting the joystickBearing to range 0 to 2pi
+      if(joystickBearing<0){
+        joystickBearing+=2*Math.PI;
+      }
+      //essentially I won't bother to update this unless the bearing difference is more than 45 degrees
+      if (Math.abs(joystickBearing-previousSnapGoal)>Math.PI/4){  
+        // coding the data from 1 to 4
+        joystickBearing= joystickBearing/Math.PI*2;
+        // rounding to closest integer
+        int estimate= (int) Math.round(joystickBearing);
+        if (estimate==4){
+          //the PIDController doesn't appreciate snapping between 0 and 4, which are essentially the same thing
+          estimate=0;
+        }
+        joystickBearing=estimate;
+        //adding this because I got a funny feeling about the fact that it is rounded to a long
+        SmartDashboard.putNumber("approximation", estimate);
+        //converting back to radians
+        snapGoal=joystickBearing*Math.PI/2;
         //updating the new goal if the joystick is moved
         robotBearingController.reset();
         robotBearingController.setSetpoint(snapGoal);
         previousSnapGoal=snapGoal;
       }
-      motors.setMoveMotors(robotBearingController.calculate(gyro.getBearing()));
+      SmartDashboard.putNumber("current Bearing", gyro.getBearing());
+      SmartDashboard.putNumber("PID setpoint", robotBearingController.getSetpoint());
+      SmartDashboard.putNumber("PID output", robotBearingController.calculate(gyro.getBearing()));
+      motors.setMoveMotors(robotBearingController.calculate(gyro.getBearing())*0.5);
     }
   }
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("Command active", false);
     motors.setTurnMotors(0, TurnMotor.FRONT_LEFT);
     motors.setTurnMotors(0,TurnMotor.FRONT_RIGHT);
     motors.setTurnMotors(0, TurnMotor.BACK_LEFT);
