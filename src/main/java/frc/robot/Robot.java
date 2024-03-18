@@ -19,7 +19,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -77,8 +76,16 @@ public class Robot extends TimedRobot {
   // TODO: Move to command
   // https://docs.photonvision.org/en/latest/docs/programming/photonlib/robot-pose-estimator.html
   // The field from AprilTagFields will be different depending on the game.
-  PhotonCamera cam;
-  PhotonPoseEstimator photonPoseEstimator;
+  
+  // Forward Camera
+  PhotonCamera cam = new PhotonCamera("Camera_Module_v3");
+  Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
+
+  // Construct PhotonPoseEstimator
+  AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+  PhotonPoseEstimator photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_LAST_POSE, cam, robotToCam);
+
+  int i = 0;
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -90,13 +97,6 @@ public class Robot extends TimedRobot {
     //   m_autonomousCommand.schedule();
     // }
     // TODO: Move to command
-    AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-    //Forward Camera
-    cam = new PhotonCamera("Camera_Module_v3");
-    Transform3d robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0)); //Cam mounted facing forward, half a meter forward of center, half a meter up from center.
-
-    // Construct PhotonPoseEstimator
-    photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CLOSEST_TO_REFERENCE_POSE, cam, robotToCam);
   }
 
   /** This function is called periodically during autonomous. */
@@ -105,7 +105,8 @@ public class Robot extends TimedRobot {
     // TODO: Move to command
     Optional<EstimatedRobotPose> pose = photonPoseEstimator.update();
     SmartDashboard.putBoolean("Pose/Empty", pose.isEmpty());
-    SmartDashboard.putString("Pose/Result", cam.getLatestResult().toString());
+    SmartDashboard.putString("Pose/Result", i + cam.getLatestResult().toString());
+    i++;
     if(pose.isPresent()) {
       SmartDashboard.putNumber("Pose/X", pose.get().estimatedPose.getX());
       SmartDashboard.putNumber("Pose/Y", pose.get().estimatedPose.getY());
