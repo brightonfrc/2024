@@ -142,7 +142,7 @@ public class Snap extends Command {
       bearingControllerFrontRight.atSetpoint() ||
       bearingControllerBackLeft.atSetpoint() ||
       bearingControllerBackRight.atSetpoint()){
-      joystickBearing=Math.atan2(controller.getLeftX(),controller.getLeftX());
+      joystickBearing=Math.atan2(controller.getLeftX(),controller.getLeftY());
       //converting the joystickBearing to range 0 to 2pi
       if(joystickBearing<0){
         joystickBearing+=2*Math.PI;
