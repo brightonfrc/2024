@@ -7,7 +7,7 @@ import frc.robot.subsystems.Motors.TurnMotor;
 import frc.robot.subsystems.Gyroscope;
 import frc.robot.Constants.PIDConstants;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -19,7 +19,7 @@ public class Drive extends Command {
   private final Encoders encoders;
   private final Motors motors;
   private final Gyroscope gyro;
-  private final Joystick joystick;
+  private final CommandPS4Controller controller;
   private PIDController bearingControllerFrontLeft;
   private PIDController bearingControllerFrontRight;
   private PIDController bearingControllerBackLeft;
@@ -41,6 +41,7 @@ public class Drive extends Command {
   private double previousBearingGoal;
   private double fieldOrientOffset;
   private double joystickBearing;
+  private double joystickMagnitude;
 
 
   /**
@@ -48,10 +49,10 @@ public class Drive extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Drive(Motors motors, Encoders encoders, Gyroscope gyro, Joystick stick) {
+  public Drive(Motors motors, Encoders encoders, Gyroscope gyro, CommandPS4Controller controller) {
     this.encoders=encoders;
     this.motors=motors;
-    joystick=stick;
+    this.controller=controller;
     this.gyro=gyro;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -102,9 +103,14 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("joystick Magnitude", joystick.getMagnitude());
+    //using Pythagoras to find joystick magnitude
+    joystickMagnitude=Math.sqrt(controller.getLeftX()*controller.getLeftX()+controller.getLeftY()*controller.getLeftY());
+    //since the maximum value of this calculation is root 2, I am returning the range of joystickMagnitude
+    //to 0 to 1 by dividing by root 2
+    joystickMagnitude=joystickMagnitude/Math.sqrt(2);
+    SmartDashboard.putNumber("joystick Magnitude", joystickMagnitude);
     //Adding Pi to the joystick output so that it is within the range 0 to 2 pi
-    joystickBearing=joystick.getDirectionRadians();
+    joystickBearing=Math.atan2(controller.getLeftX(),controller.getLeftY());
     if (joystickBearing<0){
       //converting joystick bearing from range 0 to 2pi
       joystickBearing+=Math.PI*2;
@@ -156,8 +162,8 @@ public class Drive extends Command {
     motors.setTurnMotors(bearingControllerBackRight.calculate(currentBearing)*0.5, TurnMotor.BACK_RIGHT);
     SmartDashboard.putNumber("Back right Bearing", currentBearing);
   
-    //setting the speed, but at 0.1 scale to ensure no one dies
-    motors.setMoveMotors(joystick.getMagnitude()*0.25);
+    
+    motors.setMoveMotors(joystickMagnitude*0.5);
   }
 
   // Called once the command ends or is interrupted.

@@ -16,16 +16,14 @@ import frc.robot.Constants.Ports;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.Gyroscope;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
@@ -66,11 +64,9 @@ public class RobotContainer {
   //motor radius is configured in mm and distance per rotation is still unkown
   private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, MotorConstants.movementPerRotation);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
-  // remember to set the joystick port
+  
+  private CommandPS4Controller controller = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
 
-  private Joystick stick = new Joystick(OperatorConstants.kDriverControllerPort);
-  // this is the button on the handle of the joystick
-  private JoystickButton snapButton = new JoystickButton(stick, OperatorConstants.snapButtonNum);
 
 
 
@@ -93,11 +89,11 @@ public class RobotContainer {
   private void configureBindings() {
 
 
-    snapButton.whileTrue(new Snap(motors, encoders, gyroscope, stick));
-  
+    //snap command is triggered by holding down r1. 
+    controller.R1().whileTrue(new Snap(motors, encoders, gyroscope, controller));
   }
   private void defaultCommands(){
-    motors.setDefaultCommand(new Drive(motors,encoders,gyroscope,stick));
+    motors.setDefaultCommand(new Drive(motors,encoders,gyroscope,controller));
   }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -8,7 +8,7 @@ import frc.robot.subsystems.Gyroscope;
 import frc.robot.Constants.PIDConstants;
 import frc.robot.Constants.SnapConstants;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -23,7 +23,7 @@ public class Snap extends Command {
   private final Motors motors;
   private final Encoders encoders;
   private final Gyroscope gyro;
-  private final Joystick stick;
+  private final CommandPS4Controller controller;
   
   private PIDController bearingControllerFrontLeft;
   private PIDController bearingControllerFrontRight;
@@ -51,11 +51,11 @@ public class Snap extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Snap(Motors motors, Encoders encoders, Gyroscope gyro, Joystick stick) {
+  public Snap(Motors motors, Encoders encoders, Gyroscope gyro, CommandPS4Controller controller) {
     this.motors = motors;
     this.encoders= encoders;
     this.gyro=gyro;
-    this.stick= stick;
+    this.controller= controller;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(motors, encoders, gyro);
   }
@@ -142,12 +142,12 @@ public class Snap extends Command {
       bearingControllerFrontRight.atSetpoint() ||
       bearingControllerBackLeft.atSetpoint() ||
       bearingControllerBackRight.atSetpoint()){
-      joystickBearing=stick.getDirectionRadians();
-      SmartDashboard.putNumber("JoystickBearing", joystickBearing);
+      joystickBearing=Math.atan2(controller.getLeftX(),controller.getLeftX());
       //converting the joystickBearing to range 0 to 2pi
       if(joystickBearing<0){
         joystickBearing+=2*Math.PI;
       }
+      SmartDashboard.putNumber("JoystickBearing", joystickBearing);
       //essentially I won't bother to update this unless the bearing difference is more than 45 degrees
       if (Math.abs(joystickBearing-previousSnapGoal)>Math.PI/4){  
         // coding the data from 1 to 4
