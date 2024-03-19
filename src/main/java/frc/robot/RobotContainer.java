@@ -96,7 +96,7 @@ public class RobotContainer {
   private void configureBindings() {
 
 
-    //snap command is triggered by holding down r1. 
+    //snap command is triggered by holding down the circle button. 
     controller.circle().whileTrue(new Snap(motors, encoders, gyroscope, controller));
     controller.L1().whileTrue(new IntakeNote(intake));
     controller.R1().whileTrue(new EjectNote(intake));
