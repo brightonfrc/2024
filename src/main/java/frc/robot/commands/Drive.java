@@ -122,21 +122,33 @@ public class Drive extends Command {
     {
       //updating the new goal if the joystick is moved
       previousBearingGoal=joystickBearing;
-      bearingControllerFrontLeft.setSetpoint(previousBearingGoal);
+      
+      if (previousBearingGoal<Math.PI*3/2){
+        bearingControllerFrontLeft.setSetpoint(previousBearingGoal+Math.PI/2);  
+      }
+      else{
+        bearingControllerFrontLeft.setSetpoint(previousBearingGoal-Math.PI/2*3);
+      }
       bearingControllerFrontLeft.reset();
+      
       bearingControllerFrontRight.setSetpoint(previousBearingGoal);
       bearingControllerFrontRight.reset();
-      bearingControllerBackLeft.setSetpoint(previousBearingGoal);
+      if(previousBearingGoal<Math.PI){
+        bearingControllerBackLeft.setSetpoint(previousBearingGoal+Math.PI);
+      }
+      else{
+        bearingControllerBackLeft.setSetpoint(previousBearingGoal-Math.PI);
+      }
       bearingControllerBackLeft.reset();
       //due to the tendency for the backright motor to be inversed, I will always set the bearing goal to be 
       //the current bearing + 180 degrees.
-      if (previousBearingGoal<Math.PI)
+      if (previousBearingGoal<Math.PI/2)
       {
-        bearingControllerBackRight.setSetpoint(previousBearingGoal+Math.PI);
+        bearingControllerBackRight.setSetpoint(previousBearingGoal+Math.PI/2*3);
       }
       else{
         //making sure the setpoint is never more than 2 pi radians
-        bearingControllerBackRight.setSetpoint(previousBearingGoal-Math.PI);
+        bearingControllerBackRight.setSetpoint(previousBearingGoal-Math.PI/2);
       }
       bearingControllerBackRight.reset();
     }
