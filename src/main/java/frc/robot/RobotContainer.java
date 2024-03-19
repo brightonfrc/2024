@@ -11,14 +11,16 @@ import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.EjectNote;
+import frc.robot.commands.FireAmp;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
+import frc.robot.subsystems.Gyroscope;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.subsystems.Gyroscope;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -63,6 +65,8 @@ public class RobotContainer {
   private final AbsoluteEncoder backRightTurnEncoder = backRightTurn.getAbsoluteEncoder(Type.kDutyCycle);
   private final AHRS gyro = new AHRS(I2C.Port.kMXP);
   private final VictorSPX intakeMotor = new VictorSPX(Ports.kIntakeMotorPort);
+  private final VictorSPX leftShooterMotor = new VictorSPX(Ports.kLeftShooterMotor);
+  private final VictorSPX rightShooterMotor = new VictorSPX(Ports.kRightShooterMotor);
 
 
   private final Motors motors= new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
@@ -70,6 +74,7 @@ public class RobotContainer {
   private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, MotorConstants.movementPerRotation);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
   private final Intake intake = new Intake(intakeMotor);
+  private final Shooter shooter = new Shooter(leftShooterMotor, rightShooterMotor);
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   
   private CommandPS4Controller controller = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
@@ -98,8 +103,11 @@ public class RobotContainer {
 
     //snap command is triggered by holding down the circle button. 
     controller.circle().whileTrue(new Snap(motors, encoders, gyroscope, controller));
+
     controller.L1().whileTrue(new IntakeNote(intake));
     controller.R1().whileTrue(new EjectNote(intake));
+
+    controller.L2().whileTrue(new FireAmp(shooter));
   }
   private void defaultCommands(){
     motors.setDefaultCommand(new Drive(motors,encoders,gyroscope,controller));

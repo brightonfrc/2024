@@ -30,6 +30,8 @@ public final class Constants {
     public static int kDriveBackRightTurn = 8;
 
     public static int kIntakeMotorPort=10;
+    public static int kLeftShooterMotor=11;
+    public static int kRightShooterMotor=12;
     }
 
   public static class MotorConstants{
