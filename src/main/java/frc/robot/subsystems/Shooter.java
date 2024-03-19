@@ -19,7 +19,11 @@ public class Shooter extends SubsystemBase {
   }
   public void shootAmp(){
     //setting it to 50% power for now
-    leftShooter.set(ControlMode.PercentOutput, 0.1);
-    rightShooter.set(ControlMode.PercentOutput, 0.1);
+    leftShooter.set(ControlMode.PercentOutput, 0.5);
+    rightShooter.set(ControlMode.PercentOutput, 0.5);
+  }
+  public void stopRunning(){
+    leftShooter.set(ControlMode.PercentOutput,0);
+    rightShooter.set(ControlMode.PercentOutput,0);
   }
 }
