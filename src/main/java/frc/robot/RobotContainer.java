@@ -9,9 +9,12 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Snap;
+import frc.robot.commands.IntakeNote;
+import frc.robot.commands.EjectNote;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Encoders;
 import frc.robot.subsystems.Motors;
+import frc.robot.subsystems.Intake;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.MotorConstants;
 import frc.robot.Constants.OperatorConstants;
@@ -27,6 +30,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -36,7 +40,7 @@ import edu.wpi.first.wpilibj.I2C;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  
   // the video says to define the motors within the motors subsystem, but I will just define it here so I know where all my 
   // variables are
   
@@ -58,12 +62,15 @@ public class RobotContainer {
   private final AbsoluteEncoder backRightMoveEncoder = backRightMove.getAbsoluteEncoder(Type.kDutyCycle);
   private final AbsoluteEncoder backRightTurnEncoder = backRightTurn.getAbsoluteEncoder(Type.kDutyCycle);
   private final AHRS gyro = new AHRS(I2C.Port.kMXP);
+  private final VictorSPX intakeMotor = new VictorSPX(Ports.kIntakeMotorPort);
 
 
   private final Motors motors= new Motors(frontLeftMove, frontLeftTurn, frontRightMove, frontRightTurn, backLeftMove, backLeftTurn, backRightMove, backRightTurn);
   //motor radius is configured in mm and distance per rotation is still unkown
   private final Encoders encoders= new Encoders(frontLeftMoveEncoder, frontLeftTurnEncoder, frontRightTurnEncoder, frontRightMoveEncoder, backLeftMoveEncoder, backLeftTurnEncoder, backRightMoveEncoder, backRightTurnEncoder, MotorConstants.movementPerRotation);
   private final Gyroscope gyroscope = new Gyroscope(gyro);
+  private final Intake intake = new Intake(intakeMotor);
+  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   
   private CommandPS4Controller controller = new CommandPS4Controller(OperatorConstants.kDriverControllerPort);
 
@@ -90,7 +97,9 @@ public class RobotContainer {
 
 
     //snap command is triggered by holding down r1. 
-    controller.R1().whileTrue(new Snap(motors, encoders, gyroscope, controller));
+    controller.circle().whileTrue(new Snap(motors, encoders, gyroscope, controller));
+    controller.L1().whileTrue(new IntakeNote(intake));
+    controller.R1().whileTrue(new EjectNote(intake));
   }
   private void defaultCommands(){
     motors.setDefaultCommand(new Drive(motors,encoders,gyroscope,controller));
