@@ -35,6 +35,7 @@ import frc.robot.commands.FireSpeakerTimeLimited;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeNoteTimeLimited;
 import frc.robot.commands.SwerveDrive;
+import frc.robot.commands.LimitSpeedCommand;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -138,6 +139,8 @@ public class RobotContainer {
     m_driverController.R1().whileTrue(new EjectNote(intake));
 
     m_driverController.L2().whileTrue(new FireSpeaker(shooter));
+
+    m_driverController.square().onTrue(new LimitSpeedCommand());
   }
 
   

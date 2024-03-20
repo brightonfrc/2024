@@ -77,7 +77,13 @@ public class SwerveDrive extends Command {
     SmartDashboard.putNumber("setpoint", bearingController.getSetpoint());
     SmartDashboard.putNumber("bearing", gyro.getBearing());
     SmartDashboard.putNumber("PID output", bearingController.calculate(gyro.getBearing()));
-    drive.drive(MathUtil.applyDeadband(controller.getLeftY(), OIConstants.kDriveDeadband) * 0.3, MathUtil.applyDeadband(controller.getLeftX(), OIConstants.kDriveDeadband) * 0.3, bearingController.calculate(gyro.getBearing())*maxRotationRate, true, true);
+    SmartDashboard.putBoolean("Limiter active", SwerveDriveCommandConstants.limiterActive);
+    if(SwerveDriveCommandConstants.limiterActive){
+      //if limiter is active, reduce speed to 5%
+      drive.drive(MathUtil.applyDeadband(controller.getLeftY(), OIConstants.kDriveDeadband) * 0.05, MathUtil.applyDeadband(controller.getLeftX(), OIConstants.kDriveDeadband) * 0.05, bearingController.calculate(gyro.getBearing())*maxRotationRate, true, true);
+    }else{  
+      drive.drive(MathUtil.applyDeadband(controller.getLeftY(), OIConstants.kDriveDeadband) * 0.3, MathUtil.applyDeadband(controller.getLeftX(), OIConstants.kDriveDeadband) * 0.3, bearingController.calculate(gyro.getBearing())*maxRotationRate, true, true);
+    }
   }
 
   // Called once the command ends or is interrupted.
