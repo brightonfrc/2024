@@ -20,6 +20,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.CANIds;
+import frc.robot.Constants.VelocityLimiter;
 // import frc.robot.commands.ManualDrive;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -34,6 +35,7 @@ import frc.robot.commands.FireSpeaker;
 import frc.robot.commands.FireSpeakerTimeLimited;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeNoteTimeLimited;
+import frc.robot.commands.LimiterButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -66,14 +68,14 @@ public class RobotContainer {
   // The driver's controller
   CommandPS4Controller m_driverController = new CommandPS4Controller(OIConstants.kDriverControllerPort);
 
-  // private final VictorSPX intakeMotor = new VictorSPX(CANIds.kIntakeMotor);
-  // private final VictorSPX leftShooterMotor = new VictorSPX(CANIds.kLeftShooterMotor);
-  // private final VictorSPX rightShooterMotor = new VictorSPX(CANIds.kRightShooterMotor);
-  // private final CANSparkMax liftMotor = new CANSparkMax(12/*CANIds.kLiftMotor*/, MotorType.kBrushless);
+  private final VictorSPX intakeMotor = new VictorSPX(CANIds.kIntakeMotor);
+  private final VictorSPX leftShooterMotor = new VictorSPX(CANIds.kLeftShooterMotor);
+  private final VictorSPX rightShooterMotor = new VictorSPX(CANIds.kRightShooterMotor);
+  private final CANSparkMax liftMotor = new CANSparkMax(12/*CANIds.kLiftMotor*/, MotorType.kBrushless);
 
-  // private final Intake intake = new Intake(intakeMotor);
-  // private final Shooter shooter = new Shooter(leftShooterMotor, rightShooterMotor);
-  // private final Lift lift = new Lift(liftMotor);
+  private final Intake intake = new Intake(intakeMotor);
+  private final Shooter shooter = new Shooter(leftShooterMotor, rightShooterMotor);
+  private final Lift lift = new Lift(liftMotor);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,8 +104,8 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * 0.3,
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * 0.3,
+                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * VelocityLimiter.limitAmount,
+                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * VelocityLimiter.limitAmount,
                 -MathUtil.applyDeadband(m_driverController.getR2Axis(), OIConstants.kDriveDeadband), // Weirdly this gets right stick X
                 true, true),
             m_robotDrive));
@@ -125,14 +127,15 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-    // m_driverController.triangle().onTrue(new Climb(lift, false));
-    // m_driverController.circle().onTrue(new Climb(lift, true));
+    m_driverController.triangle().onTrue(new Climb(lift, false));
+    m_driverController.circle().onTrue(new Climb(lift, true));
 
-    // m_driverController.L1().whileTrue(new IntakeNote(intake));
-    // m_driverController.R1().whileTrue(new EjectNote(intake));
+    m_driverController.L1().whileTrue(new IntakeNote(intake));
+    m_driverController.R1().whileTrue(new EjectNote(intake));
 
-    // m_driverController.L2().whileTrue(new ParallelCommandGroup(new FireSpeaker(shooter), new IntakeNote(intake)));
-    // m_driverController.R2().whileTrue(new ParallelCommandGroup(new FireAmp(shooter), new IntakeNote(intake)));
+    m_driverController.L2().whileTrue(new ParallelCommandGroup(new FireSpeaker(shooter), new IntakeNote(intake)));
+    m_driverController.R2().whileTrue(new ParallelCommandGroup(new FireAmp(shooter), new IntakeNote(intake)));
+    m_driverController.square().onTrue(new LimiterButton());
   }
 
   

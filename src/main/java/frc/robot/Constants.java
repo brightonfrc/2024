@@ -24,6 +24,9 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class VelocityLimiter{
+    public static double limitAmount=0.3;
+  }
   public static class ShootTimings{
     public static final double AmpShotRunTime=3000;
   }
