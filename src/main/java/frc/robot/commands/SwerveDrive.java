@@ -54,9 +54,11 @@ public class SwerveDrive extends Command {
 
     maxRotationRate=SwerveDriveCommandConstants.maxRotationRate;
     bearingController= new PIDController(kP, kI, kD);
+    bearingController.enableContinuousInput(0, 2*Math.PI);
     bearingController.setTolerance(Math.PI/180*bearingTolerance);
     previousBearingGoal=0;
     bearingController.setSetpoint(previousBearingGoal);
+    SmartDashboard.putBoolean("SwerveDriveActive", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
