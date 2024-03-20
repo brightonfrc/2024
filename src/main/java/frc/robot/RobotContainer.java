@@ -25,6 +25,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Gyroscope;
 import frc.robot.commands.Climb;
 import frc.robot.commands.EjectNote;
 // import frc.robot.commands.FireAmp;
@@ -33,6 +34,8 @@ import frc.robot.commands.FireSpeaker;
 import frc.robot.commands.FireSpeakerTimeLimited;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeNoteTimeLimited;
+import frc.robot.commands.SwerveDrive;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -46,6 +49,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 // import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 // import com.pathplanner.lib.auto.NamedCommands;
 // import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -69,10 +73,12 @@ public class RobotContainer {
   private final VictorSPX leftShooterMotor = new VictorSPX(CANIds.kLeftShooterMotor);
   private final VictorSPX rightShooterMotor = new VictorSPX(CANIds.kRightShooterMotor);
   private final CANSparkMax liftMotor = new CANSparkMax(12/*CANIds.kLiftMotor*/, MotorType.kBrushless);
+  private final AHRS gyro = new AHRS(I2C.Port.kMXP);
 
   private final Intake intake = new Intake(intakeMotor);
   private final Shooter shooter = new Shooter(leftShooterMotor, rightShooterMotor);
   private final Lift lift = new Lift(liftMotor);
+  private final Gyroscope gyroscope = new Gyroscope(gyro);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -96,17 +102,18 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * 0.3,
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * 0.3,
-                -MathUtil.applyDeadband(m_driverController.getR2Axis(), OIConstants.kDriveDeadband), // Weirdly this gets right stick X
-                true, true),
-            m_robotDrive));
+    // m_robotDrive.setDefaultCommand(
+    //     // The left stick controls translation of the robot.
+    //     // Turning is controlled by the X axis of the right stick.
+    //     new RunCommand(
+    //         () -> m_robotDrive.drive(
+    //             -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * 0.3,
+    //             -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * 0.3,
+    //             -MathUtil.applyDeadband(m_driverController.getR2Axis(), OIConstants.kDriveDeadband), // Weirdly this gets right stick X
+    //             true, true),
+    //         m_robotDrive));
         // new ManualDrive(m_robotDrive, m_driverController));
+    m_robotDrive.setDefaultCommand(new SwerveDrive(m_robotDrive, gyroscope, m_driverController));    
   }
 
   /**
