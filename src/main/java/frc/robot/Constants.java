@@ -27,6 +27,15 @@ public final class Constants {
   public static class ShootTimings{
     public static final double AmpShotRunTime=3000;
   }
+  public static class SwerveDriveCommandConstants{
+    //this is the maximum rate that the robot is allowed to rotate at. 
+    //for convenience's sake, I will say 1 radians per second (approx 120 degrees/s)
+    public static final double maxRotationRate=1;
+    public static final double kP=0.15;
+    public static final double kI=0.0;
+    public static final double kD=0.0;
+    public static final double bearingTolerance=1;
+  }
 
   public static class CANIds {
 
