@@ -29,8 +29,8 @@ public final class Constants {
   }
   public static class SwerveDriveCommandConstants{
     //this is the maximum rate that the robot is allowed to rotate at. 
-    //for convenience's sake, I will say 1 radians per second (approx 120 degrees/s)
-    public static final double maxRotationRate=1;
+    //from testing with the original test branch, the best is 0.07, but I trust PID
+    public static final double maxRotationRate=0.1;
     public static final double kP=0.15;
     public static final double kI=0.0;
     public static final double kD=0.0;
