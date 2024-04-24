@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GameSetup;
@@ -72,11 +73,11 @@ public class RobotContainer {
   private final VictorSPX intakeMotor = new VictorSPX(CANIds.kIntakeMotor);
   private final VictorSPX leftShooterMotor = new VictorSPX(CANIds.kLeftShooterMotor);
   private final VictorSPX rightShooterMotor = new VictorSPX(CANIds.kRightShooterMotor);
-  private final CANSparkMax liftMotor = new CANSparkMax(12/*CANIds.kLiftMotor*/, MotorType.kBrushless);
+  // private final CANSparkMax liftMotor = new CANSparkMax(12/*CANIds.kLiftMotor*/, MotorType.kBrushless);
 
   private final Intake intake = new Intake(intakeMotor);
   private final Shooter shooter = new Shooter(leftShooterMotor, rightShooterMotor);
-  private final Lift lift = new Lift(liftMotor);
+  // private final Lift lift = new Lift(liftMotor);
 
   public boolean slowed = false;
 
@@ -101,14 +102,15 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
+    
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                processDriveInput(-MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband)) * (slowed ? 0.2 : 1),
-                processDriveInput(/* Maybe remove - */-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband)) * (slowed ? 0.2 : 1),
-                processDriveInput(-MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband)) * (slowed ? 0.0125 : 0.025), // Weirdly this gets right stick X
+                processDriveInput(-MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband)) * (slowed ? 0.1 : 0.2),
+                processDriveInput(/* Maybe remove - */-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband)) * (slowed ? 0.1 : 0.2),
+                processDriveInput(-MathUtil.applyDeadband(m_driverController.getR2Axis(), OIConstants.kDriveDeadband)) * (slowed ? 0.0001 : 0.001), // Weirdly this gets right stick X
                 GameSetup.isFieldRelative, true),
             m_robotDrive));
         // new ManualDrive(m_robotDrive, m_driverController));
@@ -138,16 +140,20 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(), // Circle
             m_robotDrive));
-    m_driverController.triangle().whileTrue(new Climb(lift, false));
-    m_driverController.circle().whileTrue(new Climb(lift, true)); // Square/
+    // m_driverController.triangle().whileTrue(new Climb(lift, false));
+    // m_driverController.circle().whileTrue(new Climb(lift, true)); // Square/
 
     m_driverController.square().whileTrue(new SlowDrivetrain(this)); // Cross
+    
 
     m_driverController.L1().whileTrue(new IntakeNote(intake));
-    m_driverController.R1().whileTrue(new EjectNote(intake));
+    // m_driverController.R1().whileTrue(new EjectNote(intake));
 
-    m_driverController.L2().whileTrue(new FireSpeaker(shooter));
-    m_driverController.R2().whileTrue(new FireAmp(shooter));
+
+    
+    // m_driverController.L2().whileTrue(new FireSpeaker(shooter));
+    m_driverController.R1().whileTrue(new FireAmp(shooter));
+
   }
 
   
@@ -170,11 +176,11 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
-    return new ParallelCommandGroup(
-      new FireSpeakerTimeLimited(shooter),
-      new SequentialCommandGroup(new WaitCommand(3.0), new IntakeNoteTimeLimited(intake)
-    ));
+  // public Command getAutonomousCommand() {
+  //   return new ParallelCommandGroup(
+  //     new FireSpeakerTimeLimited(shooter),
+  //     new SequentialCommandGroup(new WaitCommand(3.0), new IntakeNoteTimeLimited(intake)
+  //   ));
     
     // return m_autoCommand;
 
@@ -217,5 +223,4 @@ public class RobotContainer {
 
     // // Run path following command, then stop at the end.
     // return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
-  }
 }

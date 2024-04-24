@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -16,7 +17,7 @@ public class Intake extends SubsystemBase {
     leftIntake=intakeMotor;
   }
   public void runIntake(double input){
-    //setting it to 50% power for now
+    SmartDashboard.putNumber("Intake Running", input);
     leftIntake.set(ControlMode.PercentOutput, input);
     
   }

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
@@ -19,15 +20,18 @@ public class Shooter extends SubsystemBase {
   }
   public void shootAmp(){
     //setting it to 50% power for now
+    SmartDashboard.putBoolean("Shooter", true);
     leftShooter.set(ControlMode.PercentOutput, 0.5);
     rightShooter.set(ControlMode.PercentOutput, 0.5);
   }
   public void shootSpeaker(){
     //setting speaker shot to 100% power
+    SmartDashboard.putBoolean("Shooter", true);
     leftShooter.set(ControlMode.PercentOutput, 1);
     rightShooter.set(ControlMode.PercentOutput, 1);
   }
   public void stopRunning(){
+    SmartDashboard.putBoolean("Shooter", false);
     leftShooter.set(ControlMode.PercentOutput,0);
     rightShooter.set(ControlMode.PercentOutput,0);
   }
