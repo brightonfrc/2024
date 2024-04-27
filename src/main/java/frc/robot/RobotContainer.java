@@ -21,11 +21,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GameSetup;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.CANIds;
+import frc.robot.subsystems.StatusSubsystem;
 // import frc.robot.commands.ManualDrive;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Status2Subsystem;
 import frc.robot.commands.Climb;
 import frc.robot.commands.EjectNote;
 import frc.robot.commands.FireAmp;
@@ -35,6 +37,8 @@ import frc.robot.commands.FireSpeaker;
 import frc.robot.commands.FireSpeakerTimeLimited;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeNoteTimeLimited;
+import frc.robot.commands.SetStatus;
+import frc.robot.commands.SetStatus2;
 import frc.robot.commands.SlowDrivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -77,6 +81,8 @@ public class RobotContainer {
   private final Intake intake = new Intake(intakeMotor);
   private final Shooter shooter = new Shooter(leftShooterMotor, rightShooterMotor);
   private final Lift lift = new Lift(liftMotor);
+  private final StatusSubsystem statusSubsystem = new StatusSubsystem();
+  private final Status2Subsystem status2Subsystem = new Status2Subsystem();
 
   public boolean slowed = false;
 
@@ -138,16 +144,36 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(), // Circle
             m_robotDrive));
-    m_driverController.triangle().whileTrue(new Climb(lift, false));
-    m_driverController.circle().whileTrue(new Climb(lift, true)); // Square/
+    m_driverController.triangle().onTrue(
+      new ParallelCommandGroup(
+        new SequentialCommandGroup(
+          new SetStatus(statusSubsystem, "I know I won't be leaving here", 1500),
+          new SetStatus(statusSubsystem, "", 500),
+          new SetStatus(statusSubsystem, "I know I won't be leaving here", 1500),
+          new SetStatus(statusSubsystem, "", 500),
+          new SetStatus(statusSubsystem, "I know I won't be leaving here", 1500),
+          new SetStatus(statusSubsystem, "", 500),
+          new SetStatus(statusSubsystem, "I know I won't be leaving here with you", 2000)
+        ),
+        new SequentialCommandGroup(
+          new SetStatus2(status2Subsystem, "", 1000),
+          new SetStatus2(status2Subsystem, "With you", 1000),
+          new SetStatus2(status2Subsystem, "", 3000),
+          new SetStatus2(status2Subsystem, "With you", 1000)
+        )
+      )
+    );
+    
+    // m_driverController.triangle().whileTrue(new Climb(lift, false));
+    // m_driverController.circle().whileTrue(new Climb(lift, true)); // Square/
 
-    m_driverController.square().whileTrue(new SlowDrivetrain(this)); // Cross
+    // m_driverController.square().whileTrue(new SlowDrivetrain(this)); // Cross
 
-    m_driverController.L1().whileTrue(new IntakeNote(intake));
-    m_driverController.R1().whileTrue(new EjectNote(intake));
+    // m_driverController.L1().whileTrue(new IntakeNote(intake));
+    // m_driverController.R1().whileTrue(new EjectNote(intake));
 
-    m_driverController.L2().whileTrue(new FireSpeaker(shooter));
-    m_driverController.R2().whileTrue(new FireAmp(shooter));
+    // m_driverController.L2().whileTrue(new FireSpeaker(shooter));
+    // m_driverController.R2().whileTrue(new FireAmp(shooter));
   }
 
   
