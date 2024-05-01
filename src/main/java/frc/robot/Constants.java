@@ -24,9 +24,18 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class SwerveDriveCommandConstants{
+    //this is the maximum rate that the robot is allowed to rotate at. 
+    //from testing with the original test branch, the best is 0.25, but I trust PID
+    public static final double maxRotationRate=0.01;
+    public static final double kP=0.15;
+    public static final double kI=0.0;
+    public static final double kD=0.0;
+    public static final double bearingTolerance=5;
+  }
   public static class GameSetup {
     public static final double startAngleOffset = 0; // Degrees
-    public static final boolean isFieldRelative = false; // true: field relative; false: robot relative
+    public static final boolean isFieldRelative = true; // true: field relative; false: robot relative
     public static final String pathPlannerAutoStrategy = "Speaker 1 Note Right";
   }
 

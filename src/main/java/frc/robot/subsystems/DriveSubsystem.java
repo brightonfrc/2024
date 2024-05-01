@@ -28,6 +28,7 @@ import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
+
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft = new MAXSwerveModule(
       DriveConstants.kFrontLeftDrivingCanId,
@@ -185,7 +186,7 @@ public class DriveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Swerve/xSpeed", xSpeed);
     SmartDashboard.putNumber("Swerve/ySpeed", ySpeed);
     SmartDashboard.putNumber("Swerve/rot", rot);
-
+    SmartDashboard.putNumber("Swerve/Gyro Angle",getGyroAngle());
     double xSpeedCommanded;
     double ySpeedCommanded;
 
@@ -240,11 +241,24 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
-    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        fieldRelative
-            ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(getGyroAngle()))
-            : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+    // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+    //     fieldRelative
+    //         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+    //             Rotation2d.fromDegrees(getGyroAngle()))
+    //         : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+    var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+    if (fieldRelative){
+      System.out.println("Field relative");
+      ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(getGyroAngle()));
+      swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+    
+      SmartDashboard.putString("Swerve/Chassis Speeds", chassisSpeeds.toString());
+    }
+    
+    for(int i = 0; i < swerveModuleStates.length; i++) {
+      SmartDashboard.putString("Swerve/Module States " + i, swerveModuleStates[i].toString());
+    }
+    
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     m_frontLeft.setDesiredState(swerveModuleStates[0]);

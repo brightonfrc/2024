@@ -27,6 +27,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lift;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Gyroscope;
 import frc.robot.commands.Climb;
 import frc.robot.commands.EjectNote;
 import frc.robot.commands.FireAmp;
@@ -37,6 +38,7 @@ import frc.robot.commands.FireSpeakerTimeLimited;
 import frc.robot.commands.IntakeNote;
 import frc.robot.commands.IntakeNoteTimeLimited;
 import frc.robot.commands.SlowDrivetrain;
+import frc.robot.commands.SwerveDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -77,6 +79,7 @@ public class RobotContainer {
 
   private final Intake intake = new Intake(intakeMotor);
   private final Shooter shooter = new Shooter(leftShooterMotor, rightShooterMotor);
+  private final Gyroscope gyro = new Gyroscope();
   // private final Lift lift = new Lift(liftMotor);
 
   public boolean slowed = false;
@@ -114,6 +117,7 @@ public class RobotContainer {
                 GameSetup.isFieldRelative, true),
             m_robotDrive));
         // new ManualDrive(m_robotDrive, m_driverController));
+    // m_robotDrive.setDefaultCommand(new SwerveDrive(m_robotDrive,gyro,m_driverController));    
   }
 
   private double processDriveInput(double input) {
