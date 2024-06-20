@@ -25,6 +25,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
   private CANSparkMax motor;
   private long startTime;
   private long currentTime;
@@ -99,6 +100,7 @@ public class Robot extends TimedRobot {
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
+    
     motor = new CANSparkMax(10, MotorType.kBrushless);
     startTime=System.currentTimeMillis();
   }
